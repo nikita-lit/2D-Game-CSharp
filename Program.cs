@@ -1,16 +1,19 @@
 ﻿global using Raylib_cs;
-using System.Numerics;
+global using System.Numerics;
 
 namespace Game2D
 {
     class Program
     {
         public static Player Player;
+        public static Camera Camera;
 
         public static void Main()
         {
-            Player = new Player();
-            Raylib.InitWindow(800, 480, "Hello World");
+            Raylib.InitWindow(1200, 800, "2D Game");
+            Player = new(new Vector2(-25.0f/2.0f, -25.0f/2.0f));
+            Camera = new(Vector2.Zero, new Vector2(Raylib.GetScreenWidth()/2f, Raylib.GetScreenHeight()/2f));
+
             Run();
         }
 
@@ -28,6 +31,7 @@ namespace Game2D
         public static void Update()
         {
             Player.Update();
+            Camera.Update();
         }
 
         public static void Render()
@@ -35,10 +39,14 @@ namespace Game2D
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.Black);
 
-            Player.Draw();
+            Raylib.BeginMode2D(Camera.Handle);
+                Raylib.DrawRectangle(-250, -250, 500, 500, Color.DarkGray);
+                Player.Draw();
 
-            //Raylib.DrawText("Hello, world!", 12, 12, 20, Color.Black);
-            //Raylib.DrawRectangle(0, 0, 50, 50, Color.Black);
+                Raylib.DrawLine((int)Camera.Target.X, -Raylib.GetScreenHeight()*10, (int)Camera.Target.X, Raylib.GetScreenHeight()*10, Color.Green);
+                Raylib.DrawLine(-Raylib.GetScreenWidth()*10, (int)Camera.Target.Y, Raylib.GetScreenWidth()*10, (int)Camera.Target.Y, Color.Green);
+
+            Raylib.EndMode2D();
 
             Raylib.EndDrawing();
         }

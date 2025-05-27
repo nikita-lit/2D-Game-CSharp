@@ -1,12 +1,10 @@
-﻿using System.Numerics;
+﻿
 
 namespace Game2D
 {
-    public class Player
+    public class Player(Vector2 position) : Entity(position)
     {
-        public Vector2 Position;
-
-        public void Update()
+        public override void Update()
         {
             if (Raylib.IsKeyDown(KeyboardKey.W))
             {
@@ -27,9 +25,10 @@ namespace Game2D
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
             Raylib.DrawRectangle((int)Position.X, (int)Position.Y, 25, 25, Color.Brown);
+            Raylib.DrawText("Player", (int)Position.X-(25/2), (int)Position.Y-20, 16, Color.White);
         }
     }
 }
