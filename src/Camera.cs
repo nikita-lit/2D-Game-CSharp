@@ -3,6 +3,8 @@
     public sealed class Camera
     {
         public Camera2D Handle;
+        private const float _SPEED = 250f;
+
         public Vector2 Target 
         {
             get
@@ -28,23 +30,27 @@
 
         public void Update()
         {
-            if (Raylib.IsKeyDown(KeyboardKey.Up))
+            Handle.Zoom = MathF.Exp(MathF.Log(Handle.Zoom) + ((float)Raylib.GetMouseWheelMove() * 0.1f));
+
+            if (Handle.Zoom > 3.0f) 
+                Handle.Zoom = 3.0f;
+            else if (Handle.Zoom < 0.1f) 
+                Handle.Zoom = 0.1f;
+
+            if (Raylib.IsKeyPressed(KeyboardKey.R))
             {
-                Handle.Target.Y -= 0.01f;
-            }
-            else if (Raylib.IsKeyDown(KeyboardKey.Down))
-            {
-                Handle.Target.Y += 0.01f;
+                Handle.Zoom = 1.0f;
             }
 
+            if (Raylib.IsKeyDown(KeyboardKey.Up))
+                Handle.Target.Y -= _SPEED * Raylib.GetFrameTime();
+            else if (Raylib.IsKeyDown(KeyboardKey.Down))
+                Handle.Target.Y += _SPEED * Raylib.GetFrameTime();
+
             if (Raylib.IsKeyDown(KeyboardKey.Right))
-            {
-                Handle.Target.X += 0.01f;
-            }
+                Handle.Target.X += _SPEED * Raylib.GetFrameTime();
             else if (Raylib.IsKeyDown(KeyboardKey.Left))
-            {
-                Handle.Target.X -= 0.01f;
-            }
+                Handle.Target.X -= _SPEED * Raylib.GetFrameTime();
         }
     }
 }

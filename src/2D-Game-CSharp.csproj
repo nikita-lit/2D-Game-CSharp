@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <RootNamespace>Game2D</RootNamespace>
+	<OutputPath>..\build\bin\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
