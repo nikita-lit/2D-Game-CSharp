@@ -17,14 +17,14 @@
             }
         }
 
-        public Camera(Vector2 target, Vector2 offset)
+        public Camera(Vector2 target, Vector2 offset, float rotation = 0.0f, float zoom = 1.0f)
         {
             Handle = new()
             {
                 Target = target,
                 Offset = offset,
-                Rotation = 0.0f,
-                Zoom = 1.0f,
+                Rotation = rotation,
+                Zoom = zoom,
             };
         }
 
@@ -32,15 +32,13 @@
         {
             Handle.Zoom = MathF.Exp(MathF.Log(Handle.Zoom) + ((float)Raylib.GetMouseWheelMove() * 0.1f));
 
-            if (Handle.Zoom > 3.0f) 
-                Handle.Zoom = 3.0f;
+            if (Handle.Zoom > 2.0f) 
+                Handle.Zoom = 2.0f;
             else if (Handle.Zoom < 0.1f) 
                 Handle.Zoom = 0.1f;
 
             if (Raylib.IsKeyPressed(KeyboardKey.R))
-            {
                 Handle.Zoom = 1.0f;
-            }
 
             if (Raylib.IsKeyDown(KeyboardKey.Up))
                 Handle.Target.Y -= _SPEED * Raylib.GetFrameTime();
