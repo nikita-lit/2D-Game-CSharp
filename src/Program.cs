@@ -6,24 +6,29 @@ namespace Game2D
 {
     class Program
     {
+        public static int ScreenWidth = 0;
+        public static int ScreenHeight = 0;
+
         public static Player Player;
         public static Camera Camera;
-
-        public static Tree Tree;
+        public static Rectangle Button;
 
         public static void Main()
         {
+            Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
             Raylib.InitWindow(1920, 1080, "2D Game");
 
-            Player = new Player() {
-                Position = Vector2.Zero,
-            };
+            ScreenWidth = Raylib.GetScreenWidth();
+            ScreenHeight = Raylib.GetScreenHeight();
 
+            Button = new Rectangle(25, 25, 200, 100);
+            Player = new Player(Vector2.Zero);
             Camera = new Camera(Vector2.Zero, new Vector2(Raylib.GetScreenWidth()/2f, Raylib.GetScreenHeight()/2f));
 
-            Tree = new Tree() {
-                Position = new Vector2(Random.Shared.Next(-500, 500)),
-            };
+            for (int i = 0; i < 10; i++)
+            {
+                var tree = new Tree(new Vector2(Random.Shared.Next(-500, 500), Random.Shared.Next(-500, 500)));
+            }
 
             Run();
         }
@@ -43,6 +48,22 @@ namespace Game2D
 
         public static void Update()
         {
+            var mousePoint = Raylib.GetMousePosition();
+            //Console.WriteLine((bool)Raylib.CheckCollisionPointRec(mousePoint, Button));
+            if (Raylib.CheckCollisionPointRec(mousePoint, Button))
+            {
+            }
+
+            if (Raylib.IsWindowResized() && !Raylib.IsWindowFullscreen())
+            {
+                var newWidth = Raylib.GetScreenWidth();
+                var newHeight = Raylib.GetScreenHeight();
+                OnWindowResize?.Invoke(ScreenWidth, ScreenHeight, newWidth, newHeight);
+                ScreenWidth = newWidth;
+                ScreenHeight = newHeight;
+            }
+
+
             // collision detection
             var entities = Entity.All.Values.ToList();
             for (int i = 0; i < entities.Count; i++)
@@ -104,18 +125,18 @@ namespace Game2D
 
         public static void DrawScreen()
         {
-
+            Raylib.DrawRectangleRec(Button, Color.White);
         }
 
         public static void DrawWorld()
         {
             Raylib.DrawRectangle(-500, -500, 1000, 1000, Color.DarkGray);
-            foreach (var pair in Entity.All)
+            foreach (var pair in Entity.All.OrderBy(e => e.Value.Position.Y))
             {
                 var entity = pair.Value;
                 var rect1 = entity.Rect;
-                //Raylib.DrawRectangleLinesEx(rect1, 1.0f, Color.White);
                 entity.Draw();
+                //Raylib.DrawRectangleLinesEx(rect1, 1.0f, Color.White);
             }
 
             //Raylib.DrawLine((int)Camera.Target.X, -Raylib.GetScreenHeight() * 10, (int)Camera.Target.X, Raylib.GetScreenHeight() * 10, Color.Green);
@@ -126,5 +147,8 @@ namespace Game2D
         {
             Raylib.CloseWindow();
         }
+
+        public delegate void OnWindowResizeEvent(int oldWidth, int oldHeight, int width, int height);
+        public static event OnWindowResizeEvent OnWindowResize;
     }
 }

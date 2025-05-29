@@ -26,6 +26,10 @@
                 Rotation = rotation,
                 Zoom = zoom,
             };
+
+            Program.OnWindowResize += (oldWidth, oldHeight, width, height) => {
+                Handle.Offset = new Vector2(width / 2f, height / 2f);
+            };
         }
 
         public void Update()

@@ -8,8 +8,9 @@
 
         public static Dictionary<Guid, Entity> All = new();
 
-        public Entity()
+        public Entity(Vector2 position)
         {
+            Position = position;
             ID = Guid.NewGuid();
             All.Add(ID, this);
         }
