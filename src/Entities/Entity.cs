@@ -1,18 +1,35 @@
-﻿namespace Game2D.Entities
+﻿using Game2D.Environment;
+
+namespace Game2D.Entities
 {
+    public enum EntityID
+    {
+        None,
+        Player,
+        Tree,
+        Campfire,
+        HeatSource,
+    }
+
     public class Entity
     {
-        public Rectangle Rect; // for collision detection
+        public virtual EntityID EntityID => EntityID.None;
+
+        public World World { get; set; }
+        public Entity Parent { get; set; }
+
+        public Collider Collider;
+        public RectCollider RectCollider => Collider as RectCollider;
+
         public Vector2 Position;
         public Guid ID;
 
-        public static Dictionary<Guid, Entity> All = new();
-
         public Entity(Vector2 position)
         {
+            World = Program.World;
             Position = position;
             ID = Guid.NewGuid();
-            All.Add(ID, this);
+            Program.World.Entities.Add(ID, this);
         }
 
         ~Entity() { Destroy(); }
@@ -22,7 +39,7 @@
         
         public void Destroy()
         {
-            All.Remove(ID);
+            Program.World.Entities.Remove(ID);
         }
     }
 }

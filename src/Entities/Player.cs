@@ -2,20 +2,25 @@
 {
     public class Player : Entity
     {
+        public override EntityID EntityID => EntityID.Player;
+
         private const float SIZE = 5.0f;
         private const float SPEED = 230f;
 
-        private Sprite _sprite;
+        private readonly Sprite _sprite;
 
-        public Player(Vector2 position) : base(position)
+        public Player(Vector2 position) 
+            : base(position)
         {
             _sprite = new Sprite("../../assets/textures/player.png");
-            Rect = new Rectangle(0, 0, 50, 50);
+            Collider = new RectCollider() {
+                Rect = new Rectangle(0, 0, 50, 50),
+            };
         }
 
         public override void Update()
         {
-            Rect.Position = Position - new Vector2(Rect.Width/2, Rect.Height/2);
+            RectCollider.Rect.Position = Position - new Vector2(RectCollider.Width/2, RectCollider.Height/2);
 
             if (Raylib.IsKeyDown(KeyboardKey.W))
                 Position.Y -= SPEED * Raylib.GetFrameTime();

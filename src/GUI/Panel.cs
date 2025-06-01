@@ -1,8 +1,19 @@
-﻿namespace Game2D.GUI
+﻿namespace Game2D.Gui
 {
-    public abstract class Panel
+    public class Panel
     {
-        public abstract void Update();
-        public abstract void Draw();
+        public Panel()
+        {
+            GUI.Panels.Add(this);
+        }
+
+        public virtual void Update() { }
+        public virtual void Draw() { }
+        public virtual bool IsHovered() { return false; }
+
+        public virtual void Destroy()
+        {
+            GUI.Panels.Remove(this);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Game2D
+﻿namespace Game2D.Utils
 {
     public static class MathX
     {
