@@ -6,6 +6,7 @@ using Game2D.Survival;
 using Game2D.Environment;
 using Game2D.Utils;
 using Game2D.Classes;
+using Game2D.Items;
 
 namespace Game2D
 {
@@ -23,7 +24,7 @@ namespace Game2D
         public static void Main()
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
-            Raylib.InitWindow(1920, 1080, "2D Game");
+            Raylib.InitWindow(1280, 800, "2D Game");
 
             ScreenWidth = Raylib.GetScreenWidth();
             ScreenHeight = Raylib.GetScreenHeight();
@@ -34,8 +35,10 @@ namespace Game2D
 
             _ = new Campfire(new Vector2(0, 100));
 
-            for (int i = 0; i < 10; i++)
-                _ = new Tree(new Vector2(Random.Shared.Next(-500, 500), Random.Shared.Next(-500, 500)));
+            //for (int i = 0; i < 10; i++)
+            //    _ = new Tree(new Vector2(Random.Shared.Next(-500, 500), Random.Shared.Next(-500, 500)));
+
+            _ = new Item(new Vector2(25, 25));
 
             Run();
         }
@@ -55,6 +58,7 @@ namespace Game2D
 
         public static void Update()
         {
+            UpdateInput();
             GUI.Update();
 
             if (Raylib.IsWindowResized() && !Raylib.IsWindowFullscreen())

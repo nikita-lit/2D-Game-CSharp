@@ -1,10 +1,15 @@
-﻿namespace Game2D.Gui
+﻿using Game2D.Interfaces;
+
+namespace Game2D.Gui
 {
-    public class Panel
+    public class Panel : IHoverable
     {
+        public MouseCursor Cursor { get; set; } = MouseCursor.Default;
+
         public Panel()
         {
             GUI.Panels.Add(this);
+            Program.Hoverables.Add(this);
         }
 
         public virtual void Update() { }

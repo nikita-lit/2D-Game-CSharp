@@ -13,7 +13,7 @@ namespace Game2D.Entities
 
         private Sprite _sprite;
         private Sprite _spriteFire;
-        public Rectangle UseRect;
+        private RectUse _rectUse;
 
         public bool IsLit;
         public float Fuel;
@@ -32,7 +32,10 @@ namespace Game2D.Entities
                 Rect = new Rectangle((int)Position.X - (25 / 2), (int)Position.Y - (25 / 2), 25, 25),
             };
 
-            UseRect = new Rectangle((int)Position.X - (50 / 2), (int)Position.Y - (50 / 2), 50, 50);
+            _rectUse = new RectUse(
+                new Rectangle((int)Position.X - (50 / 2), (int)Position.Y - (50 / 2), 50, 50),
+                OnUse);
+
             Fuel = 100;
             Radius = 300f;
 
@@ -43,7 +46,7 @@ namespace Game2D.Entities
             };
         }
 
-        public void Toggle()
+        public void OnUse(Entity user)
         {
             IsLit = !IsLit;
         }
@@ -51,11 +54,6 @@ namespace Game2D.Entities
         public override void Update()
         {
             RectCollider.Rect.Position = Position - RectCollider.HalfRect;
-
-            bool isHovered = Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), UseRect);
-            Raylib.SetMouseCursor(isHovered ? MouseCursor.PointingHand : MouseCursor.Default);
-            if (isHovered && Raylib.IsMouseButtonPressed(MouseButton.Left) && Fuel > 0)
-                Toggle();
 
             if (IsLit)
             {
@@ -75,6 +73,9 @@ namespace Game2D.Entities
 
             _heatSource.IsEnabled = IsLit;
             _heatSource.Update();
+
+            _rectUse.Position = Position;
+            _rectUse.Update();
         }
 
         public override void Draw()
@@ -86,7 +87,8 @@ namespace Game2D.Entities
 
             Raylib.DrawTextureEx((IsLit ? _spriteFire.Texture : _sprite.Texture), Position - textureOffset, 0.0f, SIZE, Color.White);
             Raylib.DrawText(Fuel.ToString(), (int)Position.X, (int)Position.Y, 26, Color.White);
-            //Raylib.DrawRectangleLinesEx(UseRect, 1.0f, Color.Lime);
+
+            _rectUse.Draw();
         }
     }
 }

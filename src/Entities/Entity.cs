@@ -1,5 +1,7 @@
 ﻿using Game2D.Environment;
 using Game2D.Classes;
+using System;
+using System.Xml.Linq;
 
 namespace Game2D.Entities
 {
@@ -10,6 +12,7 @@ namespace Game2D.Entities
         Tree,
         Campfire,
         HeatSource,
+        Item,
     }
 
     public class Entity
@@ -42,6 +45,20 @@ namespace Game2D.Entities
         public void Destroy()
         {
             Program.World.Entities.Remove(ID);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || this.GetType() != obj.GetType())
+                return false;
+
+            Entity other = (Entity)obj;
+            return this.ID == other.ID;
+        }
+
+        public override int GetHashCode()
+        {
+            return (ID).GetHashCode();
         }
     }
 }
