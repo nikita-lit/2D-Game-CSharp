@@ -9,8 +9,9 @@ namespace Game2D.Entities
 
         public float Radius = 0;
         public float Strength = 1.0f;
+        public bool IsEnabled = false;
 
-        private ZoneCircle _zone;
+        private readonly ZoneCircle _zone;
 
         public HeatSource(Vector2 position) 
             : base(position)
@@ -19,18 +20,19 @@ namespace Game2D.Entities
                 radius: Radius,
                 center: Position,
                 filter: e => e != this && e.EntityID == EntityID.Player,
-                onEnter: e => (e as SurvivalPlayer)?.Vitals.SetNearHeat(true),
-                onExit: e => (e as SurvivalPlayer)?.Vitals.SetNearHeat(false)
+                onEnter: e => (e as SurvivalPlayer)?.Vitals.EnterHeatZone(),
+                onExit: e => (e as SurvivalPlayer)?.Vitals.ExitHeatZone()
             );
         }
 
         public override void Update()
         {
+            _zone.IsEnabled = IsEnabled;
             _zone.Center = Position;
             _zone.Radius = Radius;
             _zone.Update(World.Entities.Values);
 
-            float dt = Raylib.GetFrameTime() * 0.05f;
+            float dt = Raylib.GetFrameTime() * 0.01f;
             foreach (var entity in _zone.EntitiesInside)
             {
                 if (entity is not SurvivalPlayer player) 
@@ -45,7 +47,9 @@ namespace Game2D.Entities
 
         public override void Draw()
         {
-            _zone.Draw();
+            if(IsEnabled)
+                _zone.Draw();
+
             Raylib.DrawCircle((int)_zone.Center.X, (int)_zone.Center.Y, 5, Color.Red);
         }
     }

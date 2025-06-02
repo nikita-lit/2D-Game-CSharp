@@ -14,8 +14,18 @@
         public float MaxTemp = 40f;
         public double LastTempDamageTime;
 
-        public bool IsNearToHeatSource = false;
-        public void SetNearHeat(bool value) => IsNearToHeatSource = value;
+        private int _heatZoneCount = 0;
+        public bool IsNearToHeatSource => _heatZoneCount > 0;
+
+        public void EnterHeatZone()
+        {
+            _heatZoneCount++;
+        }
+
+        public void ExitHeatZone()
+        {
+            _heatZoneCount = Math.Max(0, _heatZoneCount - 1);
+        }
 
         public Vitals(int maxHealth)
         {

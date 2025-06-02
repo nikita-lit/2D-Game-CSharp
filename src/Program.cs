@@ -5,6 +5,7 @@ using Game2D.Gui;
 using Game2D.Survival;
 using Game2D.Environment;
 using Game2D.Utils;
+using Game2D.Classes;
 
 namespace Game2D
 {

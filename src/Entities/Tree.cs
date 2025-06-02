@@ -1,4 +1,6 @@
-﻿namespace Game2D.Entities
+﻿using Game2D.Classes;
+
+namespace Game2D.Entities
 {
     public class Tree : Entity
     {

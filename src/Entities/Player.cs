@@ -1,11 +1,13 @@
-﻿namespace Game2D.Entities
+﻿using Game2D.Classes;
+
+namespace Game2D.Entities
 {
     public class Player : Entity
     {
         public override EntityID EntityID => EntityID.Player;
 
         private const float SIZE = 5.0f;
-        private const float SPEED = 230f;
+        private const float SPEED = 300f;
 
         private readonly Sprite _sprite;
 
@@ -20,17 +22,28 @@
 
         public override void Update()
         {
-            RectCollider.Rect.Position = Position - new Vector2(RectCollider.Width/2, RectCollider.Height/2);
+            float dt = Raylib.GetFrameTime();
+            Vector2 input = Vector2.Zero;
 
-            if (Raylib.IsKeyDown(KeyboardKey.W))
-                Position.Y -= SPEED * Raylib.GetFrameTime();
-            else if(Raylib.IsKeyDown(KeyboardKey.S))
-                Position.Y += SPEED * Raylib.GetFrameTime();
+            if (Raylib.IsKeyDown(KeyboardKey.W)) input.Y -= 1;
+            if (Raylib.IsKeyDown(KeyboardKey.S)) input.Y += 1;
+            if (Raylib.IsKeyDown(KeyboardKey.D)) input.X += 1;
+            if (Raylib.IsKeyDown(KeyboardKey.A)) input.X -= 1;
 
-            if (Raylib.IsKeyDown(KeyboardKey.D))
-                Position.X += SPEED * Raylib.GetFrameTime();
-            else if (Raylib.IsKeyDown(KeyboardKey.A))
-                Position.X -= SPEED * Raylib.GetFrameTime();
+            if (input != Vector2.Zero)
+            {
+                input = Vector2.Normalize(input);
+                float runFactor = 1.0f;
+                if (Raylib.IsKeyDown(KeyboardKey.LeftShift))
+                    runFactor = 1.5f;
+
+                Velocity = input * SPEED * runFactor;
+            }
+            else
+                Velocity = Vector2.Zero;
+
+            Position += Velocity * dt;
+            RectCollider.Rect.Position = Position - new Vector2(RectCollider.Width / 2, RectCollider.Height / 2);
         }
 
         public override void Draw()

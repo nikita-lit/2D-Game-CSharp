@@ -1,4 +1,5 @@
-﻿using Game2D.Entities;
+﻿using Game2D.Classes;
+using Game2D.Entities;
 using Game2D.Gui;
 
 namespace Game2D
@@ -29,7 +30,8 @@ namespace Game2D
             Raylib.DrawText("°C: " + World.Weather.Temperature, ScreenScale(15), ScreenScale(40), ScreenScale(20), Color.White);
             Raylib.DrawText("Body °C: " + Player.Vitals.Temperature.ToString("0.0"), ScreenScale(15), ScreenScale(65), ScreenScale(20), Color.White);
 
-            Raylib.DrawText("Entities: " + World.Entities.Count, ScreenScale(15), ScreenScale(100), ScreenScale(20), Color.White);
+            Raylib.DrawText("Entities: " + World.Entities.Count, ScreenScale(15), ScreenScale(95), ScreenScale(20), Color.White);
+            Raylib.DrawText("HeatSource: " + Player.Vitals.IsNearToHeatSource, ScreenScale(15), ScreenScale(120), ScreenScale(20), Color.White);
         }
 
         public static void DrawWorld()

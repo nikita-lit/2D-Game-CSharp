@@ -1,4 +1,7 @@
-﻿namespace Game2D.Entities
+﻿using Game2D.Utils;
+using Game2D.Classes;
+
+namespace Game2D.Entities
 {
     public class Campfire : Entity
     {
@@ -14,8 +17,10 @@
 
         public bool IsLit;
         public float Fuel;
+        private double _fuelTime;
 
         public HeatSource _heatSource;
+        public float Radius;
 
         public Campfire(Vector2 position) 
             : base(position)
@@ -29,10 +34,12 @@
 
             UseRect = new Rectangle((int)Position.X - (50 / 2), (int)Position.Y - (50 / 2), 50, 50);
             Fuel = 100;
+            Radius = 300f;
 
             _heatSource = new HeatSource(position) {
                 Parent = this,
-                Radius = 300.0f,
+                Radius = Radius,
+                IsEnabled = true
             };
         }
 
@@ -47,11 +54,27 @@
 
             bool isHovered = Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), UseRect);
             Raylib.SetMouseCursor(isHovered ? MouseCursor.PointingHand : MouseCursor.Default);
-            if (isHovered && Raylib.IsMouseButtonPressed(MouseButton.Left))
+            if (isHovered && Raylib.IsMouseButtonPressed(MouseButton.Left) && Fuel > 0)
                 Toggle();
 
             if (IsLit)
-                _heatSource.Update();
+            {
+                if (_fuelTime < Raylib.GetTime())
+                {
+                    Fuel -= 1;
+                    Fuel = Math.Clamp(Fuel, 0, 100);
+
+                    if (Fuel <= 0)
+                        IsLit = false;
+
+                    float fuelFactor = MathX.Map(Fuel, 0, 100, 0.3f, 1.0f);
+                    _heatSource.Radius = Radius * fuelFactor;
+                    _fuelTime = Raylib.GetTime() + 1.0f;
+                }
+            }
+
+            _heatSource.IsEnabled = IsLit;
+            _heatSource.Update();
         }
 
         public override void Draw()
@@ -62,6 +85,7 @@
             );
 
             Raylib.DrawTextureEx((IsLit ? _spriteFire.Texture : _sprite.Texture), Position - textureOffset, 0.0f, SIZE, Color.White);
+            Raylib.DrawText(Fuel.ToString(), (int)Position.X, (int)Position.Y, 26, Color.White);
             //Raylib.DrawRectangleLinesEx(UseRect, 1.0f, Color.Lime);
         }
     }

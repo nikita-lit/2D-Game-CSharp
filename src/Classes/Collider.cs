@@ -1,4 +1,4 @@
-﻿namespace Game2D.Entities
+﻿namespace Game2D.Classes
 {
     public class Collider
     {
