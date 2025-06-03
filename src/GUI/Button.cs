@@ -1,23 +1,24 @@
-﻿namespace Game2D.Gui
+﻿using Game2D.Classes;
+using Game2D.Entities;
+
+namespace Game2D.Gui
 {
     public class Button : Panel
     {
-        public Rectangle Rect;
+        public RectUse RectUse;
 
-        public Button() : base() 
+        public Button(float width, float height, Action<Entity> onUse, Action<Panel> onDraw) : base(width, height, onDraw) 
         {
-            Rect = new Rectangle(25, 25, 200, 100);
+            RectUse = new RectUse(Rect, () => IsEnabled, onUse, false);
         }
 
-        public override bool IsHovered() 
+        protected override void OnUpdate()
         {
-            if(Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), Rect))
-                return true;
-
-            return false; 
+            RectUse.Update();
+            RectUse.Position = Position;
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
             Raylib.DrawRectangleRec(Rect, Color.White);
         }

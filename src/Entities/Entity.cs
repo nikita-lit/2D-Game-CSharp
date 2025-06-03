@@ -16,9 +16,9 @@ namespace Game2D.Entities
     [Flags]
     public enum EntityFlag
     {
-        NoDraw = 1,
-        NotUsable = 2,
-        DontCollide = 3,
+        NoDraw = 1 << 0,
+        NotUsable = 1 << 1,
+        DontCollide = 1 << 2,
     }
 
     public class Entity
@@ -71,13 +71,15 @@ namespace Game2D.Entities
             }
         }
 
-        protected virtual void OnUpdate() { }
-        protected virtual void OnDraw() { }
-
         public void Destroy()
         {
+            OnDestroy();
             Program.World.Entities.Remove(ID);
         }
+
+        protected virtual void OnUpdate() { }
+        protected virtual void OnDraw() { }
+        protected virtual void OnDestroy() { }
 
         public bool HasFlag(EntityFlag flag) => Flags.HasFlag(flag);
         public void AddFlag(EntityFlag flag) => Flags |= flag;

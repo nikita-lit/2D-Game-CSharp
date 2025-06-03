@@ -6,9 +6,6 @@ namespace Game2D
 {
     partial class Program
     {
-        public static float ScreenScale(float x) => x * (ScreenHeight / 720.0f);
-        public static int ScreenScale(int x) => (int)(x * (ScreenHeight / 720.0f));
-
         public static void Render()
         {
             Raylib.BeginDrawing();
@@ -26,12 +23,12 @@ namespace Game2D
         public static void DrawScreen()
         {
             GUI.Draw();
-            Raylib.DrawText("HP: " + Player.Vitals.Health, ScreenScale(15), ScreenScale(10), ScreenScale(20), Color.White);
-            Raylib.DrawText("°C: " + World.Weather.Temperature, ScreenScale(15), ScreenScale(40), ScreenScale(20), Color.White);
-            Raylib.DrawText("Body °C: " + Player.Vitals.Temperature.ToString("0.0"), ScreenScale(15), ScreenScale(65), ScreenScale(20), Color.White);
+            Raylib.DrawText("HP: " + Player.Vitals.Health, GUI.SS(15), GUI.SS(10), GUI.SS(20), Color.White);
+            Raylib.DrawText("°C: " + World.Weather.Temperature, GUI.SS(15), GUI.SS(40), GUI.SS(20), Color.White);
+            Raylib.DrawText("Body °C: " + Player.Vitals.Temperature.ToString("0.0"), GUI.SS(15), GUI.SS(65), GUI.SS(20), Color.White);
 
-            Raylib.DrawText("Entities: " + World.Entities.Count, ScreenScale(15), ScreenScale(95), ScreenScale(20), Color.White);
-            Raylib.DrawText("HeatSource: " + Player.Vitals.IsNearToHeatSource, ScreenScale(15), ScreenScale(120), ScreenScale(20), Color.White);
+            Raylib.DrawText("Entities: " + World.Entities.Count, GUI.SS(15), GUI.SS(95), GUI.SS(20), Color.White);
+            Raylib.DrawText("HeatSource: " + Player.Vitals.IsNearToHeatSource, GUI.SS(15), GUI.SS(120), GUI.SS(20), Color.White);
         }
 
         public static void DrawWorld()

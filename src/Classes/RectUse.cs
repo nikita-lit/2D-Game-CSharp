@@ -1,12 +1,12 @@
 ﻿using Game2D.Entities;
 using Game2D.Interfaces;
-using System;
 
 namespace Game2D.Classes
 {
     public class RectUse : IHoverable
     {
         public Vector2 Position;
+        public bool UseCenter = true;
         public Rectangle Rect;
         public Action<Entity> OnUse;
         public Func<bool> CanUseFunc;
@@ -15,18 +15,26 @@ namespace Game2D.Classes
         public bool IsHovered() => CanUse() && Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), Rect);
         public MouseCursor Cursor { get; set; } = MouseCursor.PointingHand;
 
-        public RectUse(Rectangle rect, Func<bool> canUse, Action<Entity> onUse, MouseCursor cursor = MouseCursor.PointingHand)
+        public RectUse(Rectangle rect, 
+            Func<bool> canUse, 
+            Action<Entity> onUse,
+            bool useCenter = true,
+            MouseCursor cursor = MouseCursor.PointingHand)
         {
             Rect = rect; 
             OnUse = onUse;
             Cursor = cursor;
             CanUseFunc = canUse;
+            UseCenter = useCenter;
             Program.Hoverables.Add(this);
         }
 
         public void Update()
         {
-            Rect.Position = Position - new Vector2(Rect.Width/2, Rect.Height/2);
+            if(UseCenter)
+                Rect.Position = Position - new Vector2(Rect.Width/2, Rect.Height/2);
+            else
+                Rect.Position = Position;
 
             if (!CanUse())
                 return;

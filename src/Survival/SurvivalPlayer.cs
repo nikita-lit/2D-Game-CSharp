@@ -24,7 +24,9 @@ namespace Game2D.Survival
             for (int i = keys; i < keys + 5; i++)
             {
                 if(Raylib.IsKeyPressed((KeyboardKey)i))
-                    Inventory.DropItem(i);
+                {
+                    Inventory.DropItem(i - keys);
+                }
             }
         }
 

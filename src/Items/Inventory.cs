@@ -21,7 +21,9 @@ namespace Game2D.Items
         {
             if (!Contains(item)) return;
 
-            item.AddFlag(EntityFlag.NoDraw | EntityFlag.NotUsable);
+            item.AddFlag(EntityFlag.NoDraw 
+                | EntityFlag.NotUsable 
+                | EntityFlag.DontCollide);
             item.Parent = Parent;
         }
 
@@ -29,8 +31,11 @@ namespace Game2D.Items
         {
             if (!Contains(item)) return;
 
-            item.RemoveFlag(EntityFlag.NoDraw | EntityFlag.NotUsable);
+            item.RemoveFlag(EntityFlag.NoDraw 
+                | EntityFlag.NotUsable 
+                | EntityFlag.DontCollide);
             item.Parent = null;
+            item.Position = Parent.Position + new Vector2(45, 0);
         }
 
         public void PickUpItem(Item item)
@@ -65,12 +70,12 @@ namespace Game2D.Items
             var item = _slots[slot].Item;
             if(item != null)
             {
-                RemoveItem(slot);
                 DetachItem(item);
+                RemoveItem(slot);
             }
         }
 
-        public bool IsSlotExists(int slot) => (slot >= 0 || slot < _slots.Count);
+        public bool IsSlotExists(int slot) => (slot >= 0 && slot < _slots.Count);
 
         public bool Contains(Item item)
         {

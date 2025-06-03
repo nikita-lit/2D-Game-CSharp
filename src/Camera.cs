@@ -27,8 +27,8 @@
                 Zoom = zoom,
             };
 
-            Program.OnWindowResize += (oldWidth, oldHeight, width, height) => {
-                Handle.Offset = new Vector2(width / 2f, height / 2f);
+            Program.OnScreenResize += (oldSize, newSize) => {
+                Handle.Offset = newSize/2;
             };
         }
 

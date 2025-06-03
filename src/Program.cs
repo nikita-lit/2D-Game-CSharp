@@ -12,8 +12,7 @@ namespace Game2D
 {
     partial class Program
     {
-        public static int ScreenWidth = 0;
-        public static int ScreenHeight = 0;
+        public static Vector2 ScreenSize = Vector2.Zero;
 
         public static World World;
         public static SurvivalPlayer Player;
@@ -24,10 +23,10 @@ namespace Game2D
         public static void Main()
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
-            Raylib.InitWindow(1280, 800, "2D Game");
+            Raylib.InitWindow(1920, 1080, "2D Game");
 
-            ScreenWidth = Raylib.GetScreenWidth();
-            ScreenHeight = Raylib.GetScreenHeight();
+            ScreenSize.X = Raylib.GetScreenWidth();
+            ScreenSize.Y = Raylib.GetScreenHeight();
 
             World = new World();
             Player = new SurvivalPlayer(Vector2.Zero);
@@ -40,6 +39,7 @@ namespace Game2D
 
             _ = new Item(new Vector2(25, 25));
 
+            GUI.Init();
             Run();
         }
 
@@ -63,11 +63,9 @@ namespace Game2D
 
             if (Raylib.IsWindowResized() && !Raylib.IsWindowFullscreen())
             {
-                var newWidth = Raylib.GetScreenWidth();
-                var newHeight = Raylib.GetScreenHeight();
-                OnWindowResize?.Invoke(ScreenWidth, ScreenHeight, newWidth, newHeight);
-                ScreenWidth = newWidth;
-                ScreenHeight = newHeight;
+                var newSize = new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+                OnScreenResize?.Invoke(ScreenSize, newSize);
+                ScreenSize = newSize;
             }
 
             // collision detection
@@ -130,7 +128,7 @@ namespace Game2D
             Raylib.CloseWindow();
         }
 
-        public delegate void OnWindowResizeEvent(int oldWidth, int oldHeight, int width, int height);
-        public static event OnWindowResizeEvent OnWindowResize;
+        public delegate void OnScreenResizeEvent(Vector2 oldSize, Vector2 newSize);
+        public static event OnScreenResizeEvent OnScreenResize;
     }
 }
