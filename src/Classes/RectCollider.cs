@@ -9,8 +9,10 @@
 
         public override bool CheckCollision(Collider other) 
         { 
+            if (!Active) return false;
+
             if(other == this) 
-                return true;
+                return false;
 
             var collRect = (other as RectCollider);
             if (collRect != null)

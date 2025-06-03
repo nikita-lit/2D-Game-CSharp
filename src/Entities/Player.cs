@@ -43,7 +43,6 @@ namespace Game2D.Entities
                 Velocity = Vector2.Zero;
 
             Position += Velocity * dt;
-            RectCollider.Rect.Position = Position - new Vector2(RectCollider.Width / 2, RectCollider.Height / 2);
         }
 
         protected override void OnDraw()

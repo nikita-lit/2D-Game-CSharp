@@ -1,13 +1,17 @@
-﻿namespace Game2D.Items
+﻿using Game2D.Entities;
+
+namespace Game2D.Items
 {
     public class Inventory
     {
+        public Entity Parent;
         private List<InventorySlot> _slots = new();
         public IReadOnlyList<InventorySlot> Slots => _slots;
 
-        public Inventory(int slotsCount)
+        public Inventory(Entity parent, int slotsCount)
         {
-            for(int i = 0; i < slotsCount; i++)
+            Parent = parent;
+            for (int i = 0; i < slotsCount; i++)
             {
                 _slots.Insert(i, new InventorySlot(i));
             }
@@ -17,7 +21,16 @@
         {
             if (!Contains(item)) return;
 
+            item.AddFlag(EntityFlag.NoDraw | EntityFlag.NotUsable);
+            item.Parent = Parent;
+        }
 
+        public void DetachItem(Item item)
+        {
+            if (!Contains(item)) return;
+
+            item.RemoveFlag(EntityFlag.NoDraw | EntityFlag.NotUsable);
+            item.Parent = null;
         }
 
         public void PickUpItem(Item item)
@@ -35,8 +48,29 @@
 
         public void InsertItem(int slot, Item item)
         {
+            if (!IsSlotExists(slot)) return;
             _slots[slot].Item = item;        
         }
+
+        public void RemoveItem(int slot)
+        {
+            if (!IsSlotExists(slot)) return;
+            _slots[slot].Item = null;
+        }
+
+        public void DropItem(int slot)
+        {
+            if (!IsSlotExists(slot)) return;
+
+            var item = _slots[slot].Item;
+            if(item != null)
+            {
+                RemoveItem(slot);
+                DetachItem(item);
+            }
+        }
+
+        public bool IsSlotExists(int slot) => (slot >= 0 || slot < _slots.Count);
 
         public bool Contains(Item item)
         {

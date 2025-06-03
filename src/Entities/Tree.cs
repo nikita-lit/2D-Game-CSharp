@@ -23,7 +23,7 @@ namespace Game2D.Entities
 
         protected override void OnUpdate()
         {
-            RectCollider.Rect.Position = Position;
+
         }
 
         protected override void OnDraw()

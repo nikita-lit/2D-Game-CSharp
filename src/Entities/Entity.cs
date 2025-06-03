@@ -18,6 +18,7 @@ namespace Game2D.Entities
     {
         NoDraw = 1,
         NotUsable = 2,
+        DontCollide = 3,
     }
 
     public class Entity
@@ -47,6 +48,15 @@ namespace Game2D.Entities
 
         public void Update() 
         {
+            if(Parent != null) 
+                Position = Parent.Position;
+
+            if(RectCollider != null)
+                RectCollider.Rect.Position = Position - RectCollider.HalfRect;
+               
+            if(Collider != null)
+                Collider.Active = !HasFlag(EntityFlag.DontCollide);
+
             OnUpdate();
         }
 
@@ -57,8 +67,7 @@ namespace Game2D.Entities
 
             if (Collider is RectCollider rectCollider)
             {
-                var rect1 = rectCollider.Rect;
-                Raylib.DrawRectangleLinesEx(rect1, 1.0f, Color.White);
+                Raylib.DrawRectangleLinesEx(rectCollider.Rect, 1.0f, (rectCollider.Active ? Color.White : Color.Gray));
             }
         }
 
@@ -69,6 +78,10 @@ namespace Game2D.Entities
         {
             Program.World.Entities.Remove(ID);
         }
+
+        public bool HasFlag(EntityFlag flag) => Flags.HasFlag(flag);
+        public void AddFlag(EntityFlag flag) => Flags |= flag;
+        public void RemoveFlag(EntityFlag flag) => Flags &= ~flag;
 
         public override bool Equals(object obj)
         {

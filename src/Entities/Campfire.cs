@@ -25,6 +25,9 @@ namespace Game2D.Entities
         public Campfire(Vector2 position) 
             : base(position)
         {
+            Fuel = 100;
+            Radius = 300f;
+
             _sprite = new Sprite("../../assets/textures/campfire.png");
             _spriteFire = new Sprite("../../assets/textures/campfire_fire.png");
 
@@ -34,10 +37,8 @@ namespace Game2D.Entities
 
             _rectUse = new RectUse(
                 new Rectangle((int)Position.X - (50 / 2), (int)Position.Y - (50 / 2), 50, 50),
+                () => (!HasFlag(EntityFlag.NotUsable) && Fuel > 0),
                 OnUse);
-
-            Fuel = 100;
-            Radius = 300f;
 
             _heatSource = new HeatSource(position) {
                 Parent = this,
@@ -53,8 +54,6 @@ namespace Game2D.Entities
 
         protected override void OnUpdate()
         {
-            RectCollider.Rect.Position = Position - RectCollider.HalfRect;
-
             if (IsLit)
             {
                 _fuelTimer += Raylib.GetFrameTime();

@@ -75,10 +75,11 @@ namespace Game2D
             for (int i = 0; i < entities.Count; i++)
             {
                 var entity1 = entities[i];
+                var collider1 = entity1.Collider;
                 entity1.Update();
 
-                if (entity1.Collider == null) continue;
-                var rect1 = (entity1.Collider as RectCollider).Rect;
+                if (collider1 == null || !collider1.Active) continue;
+                var rect1 = (collider1 as RectCollider).Rect;
 
                 var center1 = new Vector2(rect1.X + rect1.Width / 2, rect1.Y + rect1.Height / 2);
                 var hs1 = new Vector2(rect1.Width * 0.5f, rect1.Height * 0.5f);
@@ -86,12 +87,13 @@ namespace Game2D
                 for (int j = i + 1; j < entities.Count; j++)
                 {
                     var entity2 = entities[j];
-                    if (entity2.Collider == null) continue;
+                    var collider2 = entity2.Collider;
+                    if (collider2 == null || !collider2.Active) continue;
 
-                    var rect2 = (entity2.Collider as RectCollider).Rect;
-                    if (!Raylib.CheckCollisionRecs(rect1, rect2)) 
+                    if (!collider1.CheckCollision(collider2)) 
                         continue;
 
+                    var rect2 = (collider2 as RectCollider).Rect;
                     var center2 = new Vector2(rect2.X + rect2.Width / 2, rect2.Y + rect2.Height / 2);
                     var delta = center1 - center2;
                     var hs2 = new Vector2(rect2.Width * 0.5f, rect2.Height * 0.5f);

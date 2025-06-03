@@ -1,5 +1,6 @@
 ﻿using Game2D.Classes;
 using Game2D.Entities;
+using Game2D.Interfaces;
 
 namespace Game2D.Items
 {
@@ -19,8 +20,9 @@ namespace Game2D.Items
                 Rect = new Rectangle((int)Position.X - (20 / 2), (int)Position.Y - (20 / 2), 20, 20),
             };
 
-            _rectUse = new RectUse(this,
+            _rectUse = new RectUse(
                 new Rectangle((int)Position.X, (int)Position.Y, 40, 40),
+                () => !HasFlag(EntityFlag.NotUsable),
                 OnUse);
         }
 
@@ -43,7 +45,10 @@ namespace Game2D.Items
 
         public virtual void OnUse(Entity user)
         {
+            if (user is not IHasInventory userInv)
+                return;
 
+            userInv.Inventory.PickUpItem(this);
         }
     }
 }
