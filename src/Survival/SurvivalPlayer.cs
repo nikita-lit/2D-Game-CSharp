@@ -19,6 +19,13 @@ namespace Game2D.Survival
         {
             base.OnUpdate();
             Vitals.Update(World.Weather.Temperature);
+
+            var keys = (int)KeyboardKey.One;
+            for (int i = keys; i < keys + 5; i++)
+            {
+                if(Raylib.IsKeyPressed((KeyboardKey)i))
+                    Inventory.DropItem(i);
+            }
         }
 
         protected override void OnDraw()

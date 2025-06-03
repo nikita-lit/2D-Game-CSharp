@@ -12,7 +12,7 @@ namespace Game2D.Classes
         public Func<bool> CanUseFunc;
         public bool CanUse() => CanUseFunc != null && CanUseFunc();
 
-        public bool IsHovered() => Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), Rect);
+        public bool IsHovered() => CanUse() && Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), Rect);
         public MouseCursor Cursor { get; set; } = MouseCursor.PointingHand;
 
         public RectUse(Rectangle rect, Func<bool> canUse, Action<Entity> onUse, MouseCursor cursor = MouseCursor.PointingHand)
