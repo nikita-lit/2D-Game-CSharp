@@ -19,18 +19,18 @@ namespace Game2D.Items
                 Rect = new Rectangle((int)Position.X - (20 / 2), (int)Position.Y - (20 / 2), 20, 20),
             };
 
-            _rectUse = new RectUse(
+            _rectUse = new RectUse(this,
                 new Rectangle((int)Position.X, (int)Position.Y, 40, 40),
                 OnUse);
         }
 
-        public override void Update()
+        protected override void OnUpdate()
         {
             _rectUse.Update();
             _rectUse.Position = Position;
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
             var texturOffset = new Vector2(
                 (_sprite.Width * SIZE) / 2,

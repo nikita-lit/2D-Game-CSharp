@@ -1,13 +1,11 @@
 ﻿using Game2D.Environment;
 using Game2D.Classes;
-using System;
-using System.Xml.Linq;
 
 namespace Game2D.Entities
 {
     public enum EntityID
     {
-        None,
+        None = 0,
         Player,
         Tree,
         Campfire,
@@ -15,9 +13,17 @@ namespace Game2D.Entities
         Item,
     }
 
+    [Flags]
+    public enum EntityFlag
+    {
+        NoDraw = 1,
+        NotUsable = 2,
+    }
+
     public class Entity
     {
         public virtual EntityID EntityID => EntityID.None;
+        public EntityFlag Flags;
 
         public World World { get; set; }
         public Entity Parent { get; set; }
@@ -39,9 +45,26 @@ namespace Game2D.Entities
 
         ~Entity() { Destroy(); }
 
-        public virtual void Update() { }
-        public virtual void Draw() { }
-        
+        public void Update() 
+        {
+            OnUpdate();
+        }
+
+        public void Draw()
+        {
+            if (!Flags.HasFlag(EntityFlag.NoDraw))
+                OnDraw();
+
+            if (Collider is RectCollider rectCollider)
+            {
+                var rect1 = rectCollider.Rect;
+                Raylib.DrawRectangleLinesEx(rect1, 1.0f, Color.White);
+            }
+        }
+
+        protected virtual void OnUpdate() { }
+        protected virtual void OnDraw() { }
+
         public void Destroy()
         {
             Program.World.Entities.Remove(ID);

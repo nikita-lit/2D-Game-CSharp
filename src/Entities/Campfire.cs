@@ -17,7 +17,7 @@ namespace Game2D.Entities
 
         public bool IsLit;
         public float Fuel;
-        private double _fuelTime;
+        private float _fuelTimer = 0f;
 
         public HeatSource _heatSource;
         public float Radius;
@@ -51,13 +51,15 @@ namespace Game2D.Entities
             IsLit = !IsLit;
         }
 
-        public override void Update()
+        protected override void OnUpdate()
         {
             RectCollider.Rect.Position = Position - RectCollider.HalfRect;
 
             if (IsLit)
             {
-                if (_fuelTime < Raylib.GetTime())
+                _fuelTimer += Raylib.GetFrameTime();
+
+                if (_fuelTimer >= 1.0f)
                 {
                     Fuel -= 1;
                     Fuel = Math.Clamp(Fuel, 0, 100);
@@ -67,7 +69,7 @@ namespace Game2D.Entities
 
                     float fuelFactor = MathX.Map(Fuel, 0, 100, 0.3f, 1.0f);
                     _heatSource.Radius = Radius * fuelFactor;
-                    _fuelTime = Raylib.GetTime() + 1.0f;
+                    _fuelTimer = 0;
                 }
             }
 
@@ -78,7 +80,7 @@ namespace Game2D.Entities
             _rectUse.Update();
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
             var textureOffset = new Vector2(
                 SPRITE_SIZE/2,

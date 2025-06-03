@@ -25,7 +25,7 @@ namespace Game2D.Entities
             );
         }
 
-        public override void Update()
+        protected override void OnUpdate()
         {
             _zone.IsEnabled = IsEnabled;
             _zone.Center = Position;
@@ -45,7 +45,7 @@ namespace Game2D.Entities
             }
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
             if(IsEnabled)
                 _zone.Draw();

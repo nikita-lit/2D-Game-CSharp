@@ -14,15 +14,15 @@ namespace Game2D.Survival
             Inventory = new Inventory(5);
         }
 
-        public override void Update()
+        protected override void OnUpdate()
         {
-            base.Update();
+            base.OnUpdate();
             Vitals.Update(World.Weather.Temperature);
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
-            base.Draw();
+            base.OnDraw();
         }
     }
 }

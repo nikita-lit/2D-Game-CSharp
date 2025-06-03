@@ -21,12 +21,12 @@ namespace Game2D.Entities
             };
         }
 
-        public override void Update()
+        protected override void OnUpdate()
         {
             RectCollider.Rect.Position = Position;
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
             var textureOffset = new Vector2(
                 (SPRITE_SIZE - RectCollider.Width) / 2f, 

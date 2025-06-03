@@ -20,7 +20,7 @@ namespace Game2D.Entities
             };
         }
 
-        public override void Update()
+        protected override void OnUpdate()
         {
             float dt = Raylib.GetFrameTime();
             Vector2 input = Vector2.Zero;
@@ -46,7 +46,7 @@ namespace Game2D.Entities
             RectCollider.Rect.Position = Position - new Vector2(RectCollider.Width / 2, RectCollider.Height / 2);
         }
 
-        public override void Draw()
+        protected override void OnDraw()
         {
             var texturOffset = new Vector2(
                 (_sprite.Width * SIZE) / 2, 

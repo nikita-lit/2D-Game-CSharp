@@ -39,14 +39,7 @@ namespace Game2D
             Raylib.DrawRectangle(-500, -500, 1000, 1000, Color.DarkGray);
             foreach (var pair in World.Entities.OrderBy(e => e.Value.Position.Y))
             {
-                var entity = pair.Value;
-                entity.Draw();
-
-                if (entity.Collider != null)
-                {
-                    var rect1 = (entity.Collider as RectCollider).Rect;
-                    Raylib.DrawRectangleLinesEx(rect1, 1.0f, Color.White);
-                }
+                pair.Value.Draw();
             }
 
             //Raylib.DrawLine((int)Camera.Target.X, -Raylib.GetScreenHeight() * 10, (int)Camera.Target.X, Raylib.GetScreenHeight() * 10, Color.Green);
