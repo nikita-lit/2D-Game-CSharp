@@ -1,34 +1,48 @@
-﻿using Game2D.Classes;
-using Game2D.Entities;
-using Game2D.Gui;
+﻿using Game2D.Gui;
+using Raylib_cs;
 
 namespace Game2D
 {
     partial class Program
     {
+        public static RenderTexture2D RenderTarget;
+
+        public static void InitRender()
+        {
+            RenderTarget = Raylib.LoadRenderTexture((int)ScreenSize.X, (int)ScreenSize.Y);
+        }
+
+        public static void ReloadRenderTarget()
+        {
+            Raylib.UnloadRenderTexture(RenderTarget);
+            RenderTarget = Raylib.LoadRenderTexture((int)ScreenSize.X, (int)ScreenSize.Y);
+        }
+
         public static void Render()
         {
+            Raylib.BeginTextureMode(RenderTarget);
+                Raylib.ClearBackground(Color.Black);
+
+                Raylib.BeginMode2D(Camera.Handle);
+                DrawWorld();
+                Raylib.EndMode2D();
+
+                DrawScreen();
+            Raylib.EndTextureMode();
+
             Raylib.BeginDrawing();
-            Raylib.ClearBackground(Color.Black);
+                var texture = RenderTarget.Texture;
+                Rectangle source = new Rectangle(0, 0, texture.Width, -texture.Height); // flip Y
+                Rectangle dest = new Rectangle(0, 0, texture.Width, texture.Height);
+                Vector2 origin = new Vector2(0, 0);
 
-            Raylib.BeginMode2D(Camera.Handle);
-            DrawWorld();
-            Raylib.EndMode2D();
-
-            DrawScreen();
-
+                Raylib.DrawTexturePro(texture, source, dest, origin, 0.0f, Color.White);
             Raylib.EndDrawing();
         }
 
         public static void DrawScreen()
         {
             GUI.Draw();
-            Raylib.DrawText("HP: " + Player.Vitals.Health, GUI.SS(15), GUI.SS(10), GUI.SS(20), Color.White);
-            Raylib.DrawText("°C: " + World.Weather.Temperature, GUI.SS(15), GUI.SS(40), GUI.SS(20), Color.White);
-            Raylib.DrawText("Body °C: " + Player.Vitals.Temperature.ToString("0.0"), GUI.SS(15), GUI.SS(65), GUI.SS(20), Color.White);
-
-            Raylib.DrawText("Entities: " + World.Entities.Count, GUI.SS(15), GUI.SS(95), GUI.SS(20), Color.White);
-            Raylib.DrawText("HeatSource: " + Player.Vitals.IsNearToHeatSource, GUI.SS(15), GUI.SS(120), GUI.SS(20), Color.White);
         }
 
         public static void DrawWorld()

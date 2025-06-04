@@ -3,7 +3,7 @@ using Game2D.Interfaces;
 
 namespace Game2D.Classes
 {
-    public class RectUse : IHoverable
+    public class WorldClickable : IHoverable
     {
         public Vector2 Position;
         public bool UseCenter = true;
@@ -15,7 +15,7 @@ namespace Game2D.Classes
         public bool IsHovered() => CanUse() && Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), Rect);
         public MouseCursor Cursor { get; set; } = MouseCursor.PointingHand;
 
-        public RectUse(Rectangle rect, 
+        public WorldClickable(Rectangle rect, 
             Func<bool> canUse, 
             Action<Entity> onUse,
             bool useCenter = true,

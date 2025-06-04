@@ -1,4 +1,6 @@
-﻿namespace Game2D
+﻿using Game2D.Assets;
+
+namespace Game2D
 {
     public class Sprite
     {
@@ -8,7 +10,7 @@
 
         public Sprite(string path)
         {
-            Texture = Raylib.LoadTexture(path);
+            Texture = AssetsSystem.LoadTexture(path);
         }
     }
 }

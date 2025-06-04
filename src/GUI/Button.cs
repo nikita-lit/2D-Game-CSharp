@@ -1,21 +1,48 @@
-﻿using Game2D.Classes;
-using Game2D.Entities;
+﻿using Game2D.Entities;
 
 namespace Game2D.Gui
 {
     public class Button : Panel
     {
-        public RectUse RectUse;
+        public Func<bool> CanUseFunc;
 
-        public Button(float width, float height, Action<Entity> onUse, Action<Panel> onDraw) : base(width, height, onDraw) 
+        public event Action<Button, Entity, MouseButton> OnPress;
+        public event Action<Button, Entity, MouseButton> OnDown;
+        public event Action<Button, Entity, MouseButton> OnRelease;
+
+        public bool CanUse() => CanUseFunc == null || CanUseFunc();
+
+        public Button(
+            float width,
+            float height,
+            Func<bool> canUseFunc = null,
+            Action<Panel> onDraw = null
+        ) : base(width, height, onDraw)
         {
-            RectUse = new RectUse(Rect, () => IsEnabled, onUse, false);
+            CanUseFunc = canUseFunc;
         }
 
         protected override void OnUpdate()
         {
-            RectUse.Update();
-            RectUse.Position = Position;
+            if (!CanUse())
+                return;
+
+            if (IsHovered())
+            {
+                for (int i = 0; i < (int)MouseButton.Back; i++)
+                {
+                    var button = (MouseButton)i;
+
+                    if (Raylib.IsMouseButtonPressed(button))
+                        OnPress?.Invoke(this, Program.Player, button);
+
+                    if (Raylib.IsMouseButtonDown(button))
+                        OnDown?.Invoke(this, Program.Player, button);
+
+                    if (Raylib.IsMouseButtonReleased(button))
+                        OnRelease?.Invoke(this, Program.Player, button);
+                }
+            }
         }
 
         protected override void OnDraw()

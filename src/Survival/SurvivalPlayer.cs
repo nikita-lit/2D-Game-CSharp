@@ -7,12 +7,10 @@ namespace Game2D.Survival
     public class SurvivalPlayer : Player, IHasInventory
     {
         public Vitals Vitals;
-        public Inventory Inventory { get; private set; }
 
         public SurvivalPlayer(Vector2 position) : base(position)
         {
             Vitals = new Vitals(100);
-            Inventory = new Inventory(this, 5);
         }
 
         protected override void OnUpdate()
@@ -21,13 +19,14 @@ namespace Game2D.Survival
             Vitals.Update(World.Weather.Temperature);
 
             var keys = (int)KeyboardKey.One;
-            for (int i = keys; i < keys + 5; i++)
+            for (int i = keys; i < keys + INVENTORY_SLOTS_COUNT; i++)
             {
                 if(Raylib.IsKeyPressed((KeyboardKey)i))
-                {
-                    Inventory.DropItem(i - keys);
-                }
+                    SelectedSlot = (i - keys);
             }
+
+            if(Raylib.IsKeyPressed(KeyboardKey.Q))
+                Inventory.DropItem(SelectedSlot);
         }
 
         protected override void OnDraw()

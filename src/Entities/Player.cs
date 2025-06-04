@@ -1,13 +1,19 @@
 ﻿using Game2D.Classes;
+using Game2D.Items;
 
 namespace Game2D.Entities
 {
     public class Player : Entity
     {
+        public const int INVENTORY_SLOTS_COUNT = 6;
+
         public override EntityID EntityID => EntityID.Player;
 
         private const float SIZE = 5.0f;
         private const float SPEED = 300f;
+
+        public Inventory Inventory { get; private set; }
+        public int SelectedSlot = 0;
 
         private readonly Sprite _sprite;
 
@@ -18,6 +24,8 @@ namespace Game2D.Entities
             Collider = new RectCollider() {
                 Rect = new Rectangle(0, 0, 50, 50),
             };
+
+            Inventory = new Inventory(this, INVENTORY_SLOTS_COUNT);
         }
 
         protected override void OnUpdate()

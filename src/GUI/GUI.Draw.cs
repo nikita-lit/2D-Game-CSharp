@@ -1,4 +1,6 @@
-﻿namespace Game2D.Gui
+﻿using Game2D.Assets;
+
+namespace Game2D.Gui
 {
     public enum HorizontalAlign
     {
@@ -19,8 +21,11 @@
         public static void DrawAlignedText(
             string text,
             Vector2 position,
+            string fontName,
             int fontSize,
             Color color,
+            float rotation = 0.0f,
+            float spacing = 0.0f,
             HorizontalAlign hAlign = HorizontalAlign.Left,
             VerticalAlign vAlign = VerticalAlign.Top)
         {
@@ -28,16 +33,13 @@
             int textWidth = Raylib.MeasureText(text, scaledFontSize);
             int textHeight = scaledFontSize;
 
-            float x = position.X;
-            float y = position.Y;
-
             switch (hAlign)
             {
                 case HorizontalAlign.Center:
-                    x -= textWidth / 2f;
+                    position.X -= textWidth / 2f;
                     break;
                 case HorizontalAlign.Right:
-                    x -= textWidth;
+                    position.X -= textWidth;
                     break;
                 case HorizontalAlign.Left:
                     break;
@@ -46,16 +48,16 @@
             switch (vAlign)
             {
                 case VerticalAlign.Center:
-                    y -= textHeight / 2f;
+                    position.Y -= textHeight / 2f;
                     break;
                 case VerticalAlign.Bottom:
-                    y -= textHeight;
+                    position.Y -= textHeight;
                     break;
                 case VerticalAlign.Top:
                     break;
             }
 
-            Raylib.DrawText(text, (int)x, (int)y, scaledFontSize, color);
+            Raylib.DrawTextPro(AssetsSystem.GetFont(fontName), text, position, Vector2.Zero, rotation, scaledFontSize, spacing, color);
         }
 
     }

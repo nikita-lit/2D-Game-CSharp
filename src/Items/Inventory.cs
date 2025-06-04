@@ -13,7 +13,7 @@ namespace Game2D.Items
             Parent = parent;
             for (int i = 0; i < slotsCount; i++)
             {
-                _slots.Insert(i, new InventorySlot(i));
+                _slots.Insert(i, new InventorySlot(this, i));
             }
         }
 

@@ -28,6 +28,8 @@ namespace Game2D
             ScreenSize.X = Raylib.GetScreenWidth();
             ScreenSize.Y = Raylib.GetScreenHeight();
 
+            InitRender();
+
             World = new World();
             Player = new SurvivalPlayer(Vector2.Zero);
             Camera = new Camera(Vector2.Zero, new Vector2(Raylib.GetScreenWidth()/2f, Raylib.GetScreenHeight()/2f));
@@ -54,8 +56,6 @@ namespace Game2D
             Stop();
         }
 
-        private static float _cameraFollowScale = 0;
-
         public static void Update()
         {
             UpdateInput();
@@ -66,6 +66,7 @@ namespace Game2D
                 var newSize = new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
                 OnScreenResize?.Invoke(ScreenSize, newSize);
                 ScreenSize = newSize;
+                ReloadRenderTarget();
             }
 
             // collision detection
@@ -106,20 +107,6 @@ namespace Game2D
                 }
             }
 
-            UpdateCamera();
-        }
-
-        public static void UpdateCamera()
-        {
-            var x = Math.Abs(MathX.Map((Camera.Target.X - Player.Position.X), -500, 500, -1, 1));
-            var y = Math.Abs(MathX.Map((Camera.Target.Y - Player.Position.Y), -500, 500, -1, 1));
-            var scale = (x + y);
-
-            if (x <= 0.15f && y <= 0.15f)
-                scale = 0;
-
-            _cameraFollowScale = float.Lerp(_cameraFollowScale, scale, Raylib.GetFrameTime() * 2f);
-            Camera.Target = Vector2.Lerp(Camera.Target, Player.Position, Raylib.GetFrameTime() * _cameraFollowScale * 4f);
             Camera.Update();
         }
 

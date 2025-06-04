@@ -10,7 +10,7 @@ namespace Game2D.Items
 
         private const float SIZE = 2.0f;
         private readonly Sprite _sprite;
-        private readonly RectUse _rectUse;
+        private readonly WorldClickable _clickable;
 
         public Item(Vector2 position)
             : base(position)
@@ -20,7 +20,7 @@ namespace Game2D.Items
                 Rect = new Rectangle((int)Position.X - (20 / 2), (int)Position.Y - (20 / 2), 20, 20),
             };
 
-            _rectUse = new RectUse(
+            _clickable = new WorldClickable(
                 new Rectangle((int)Position.X, (int)Position.Y, 40, 40),
                 () => !HasFlag(EntityFlag.NotUsable),
                 OnUse);
@@ -28,8 +28,8 @@ namespace Game2D.Items
 
         protected override void OnUpdate()
         {
-            _rectUse.Update();
-            _rectUse.Position = Position;
+            _clickable.Update();
+            _clickable.Position = Position;
         }
 
         protected override void OnDraw()
@@ -40,7 +40,7 @@ namespace Game2D.Items
             );
 
             Raylib.DrawTextureEx(_sprite.Texture, Position- texturOffset, 0.0f, SIZE, Color.White);
-            _rectUse.Draw();
+            _clickable.Draw();
         }
 
         public virtual void OnUse(Entity user)

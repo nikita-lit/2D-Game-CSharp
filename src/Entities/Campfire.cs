@@ -13,7 +13,7 @@ namespace Game2D.Entities
 
         private Sprite _sprite;
         private Sprite _spriteFire;
-        private RectUse _rectUse;
+        private WorldClickable _clickable;
 
         public bool IsLit;
         public float Fuel;
@@ -28,14 +28,14 @@ namespace Game2D.Entities
             Fuel = 100;
             Radius = 300f;
 
-            _sprite = new Sprite("../../assets/textures/campfire.png");
-            _spriteFire = new Sprite("../../assets/textures/campfire_fire.png");
+            _sprite = new Sprite("campfire.png");
+            _spriteFire = new Sprite("campfire_fire.png");
 
             Collider = new RectCollider() {
                 Rect = new Rectangle((int)Position.X - (25 / 2), (int)Position.Y - (25 / 2), 25, 25),
             };
 
-            _rectUse = new RectUse(
+            _clickable = new WorldClickable(
                 new Rectangle((int)Position.X - (50 / 2), (int)Position.Y - (50 / 2), 50, 50),
                 () => (!HasFlag(EntityFlag.NotUsable) && Fuel > 0),
                 OnUse);
@@ -75,8 +75,8 @@ namespace Game2D.Entities
             _heatSource.IsEnabled = IsLit;
             _heatSource.Update();
 
-            _rectUse.Position = Position;
-            _rectUse.Update();
+            _clickable.Position = Position;
+            _clickable.Update();
         }
 
         protected override void OnDraw()
@@ -89,7 +89,7 @@ namespace Game2D.Entities
             Raylib.DrawTextureEx((IsLit ? _spriteFire.Texture : _sprite.Texture), Position - textureOffset, 0.0f, SIZE, Color.White);
             Raylib.DrawText(Fuel.ToString(), (int)Position.X, (int)Position.Y, 26, Color.White);
 
-            _rectUse.Draw();
+            _clickable.Draw();
         }
     }
 }

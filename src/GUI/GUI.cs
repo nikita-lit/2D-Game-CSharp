@@ -1,4 +1,5 @@
-﻿using Game2D.Entities;
+﻿using Game2D.Assets;
+using Game2D.Entities;
 
 namespace Game2D.Gui
 {
@@ -26,6 +27,8 @@ namespace Game2D.Gui
         public static void Init()
         {
             HUD = new HUD();
+            AssetsSystem.LoadFont("Pixel", "PixelOperator.ttf");
+            AssetsSystem.LoadFont("PixelBold", "PixelOperator-Bold.ttf");
             Program.OnScreenResize += OnScreenResize;
         }
 
@@ -46,7 +49,6 @@ namespace Game2D.Gui
 
         public static void DrawWorld()
         {
-
         }
 
         public static void OnScreenResize(Vector2 oldSize, Vector2 newSize)
