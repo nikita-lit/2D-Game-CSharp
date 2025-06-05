@@ -23,5 +23,10 @@
             Fonts.Add(fontName, font);
             return font;
         }
+
+        public static string GetScriptPath(string fileName)
+        {
+            return "../../assets/scripts/" + fileName;
+        }
     }
 }

@@ -2,7 +2,8 @@
 {
     public class Collider
     {
-        public bool Active;
+        public bool IsActive;
+        public bool IsStatic;
         public virtual bool CheckCollision(Collider other) { return false; }
     }
 }

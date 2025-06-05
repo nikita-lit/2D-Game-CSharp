@@ -1,15 +1,17 @@
 ﻿using Game2D.Entities;
-using Game2D.Environment;
 using Game2D.Survival;
 
 namespace Game2D.Gui
 {
     public class HUD
     {
+        public Panel Root;
         private List<SlotIcon> _slots = new();
 
-        public HUD()
+        public HUD(Panel root)
         {
+            Root = new Panel(root, GUI.SrcW(), GUI.SrcH());
+
             float slotSize = 80f;
             float slotSpacing = 10f;
             float slotWidth = slotSize + slotSpacing;
@@ -19,7 +21,7 @@ namespace Game2D.Gui
 
             for (int i = 0; i < Player.INVENTORY_SLOTS_COUNT; i++)
             {
-                var slot = new SlotIcon(survPlayer.Inventory.Slots[i], slotSize, slotSize, () => true);
+                var slot = new SlotIcon(Root, survPlayer.Inventory.Slots[i], slotSize, slotSize, () => true);
 
                 slot.OnPress += (panel, user, button) =>
                 {
@@ -46,27 +48,27 @@ namespace Game2D.Gui
         {
             var pos = new Vector2(GUI.SS(20), GUI.SS(15));
 
-            GUI.DrawAlignedText("HP: " + Program.Player.Vitals.Health,
+            Render.Draw.AlignedText("HP: " + Program.Player.Vitals.Health,
                 pos, "PixelBold", 36, Color.White);
 
             pos.Y += GUI.SS(35);
 
-            GUI.DrawAlignedText("C: " + Program.World.Weather.Temperature,
+            Render.Draw.AlignedText("C: " + Program.World.Weather.Temperature,
                 pos, "PixelBold", 36, Color.White);
 
             pos.Y += GUI.SS(35);
 
-            GUI.DrawAlignedText("Body C: " + Program.Player.Vitals.Temperature.ToString("0.0"),
+            Render.Draw.AlignedText("Body C: " + Program.Player.Vitals.Temperature.ToString("0.0"),
                 pos, "PixelBold", 36, Color.White);
 
             pos.Y += GUI.SS(35);
 
-            GUI.DrawAlignedText("Entities: " + Program.World.Entities.Count,
+            Render.Draw.AlignedText("Entities: " + Program.World.Entities.Count,
                 pos, "PixelBold", 36, Color.White);
 
             pos.Y += GUI.SS(35);
 
-            GUI.DrawAlignedText("HeatSource: " + Program.Player.Vitals.IsNearToHeatSource,
+            Render.Draw.AlignedText("HeatSource: " + Program.Player.Vitals.IsNearToHeatSource,
                 pos, "PixelBold", 36, Color.White);
         }
 

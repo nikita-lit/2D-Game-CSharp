@@ -4,21 +4,43 @@ namespace Game2D.Gui
 {
     public class Panel : IHoverable
     {
+        public Panel Parent;
+        public List<Panel> Children { get; private set; } = new();
+        public int ZIndex { get; set; } = 0;
+
         public Rectangle Rect;
+        public Vector2 RectCenter => Rect.Position + new Vector2(Rect.Width/2, Rect.Height/2);
 
         private Vector2 _basePosition;
         private Vector2 _baseSize;
 
         public bool IsEnabled = true;
+        public virtual bool IsInteractive { get; set; } = true;
+
         public Action<Panel> CustomDraw;
 
-        public MouseCursor Cursor { get; set; } = MouseCursor.PointingHand;
-        public bool IsHovered() => Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), Rect);
+        public virtual MouseCursor Cursor { get; set; } = MouseCursor.Default;
+        public bool IsHovered() => 
+            IsEnabled 
+            && IsInteractive 
+            && !Raylib.IsCursorHidden() 
+            && Raylib.CheckCollisionPointRec(Raylib.GetMousePosition(), Rect);
 
         public Vector2 Position
         {
-            get => new Vector2(GUI.SS(_basePosition.X), GUI.SSY(_basePosition.Y));
-            set => _basePosition = new Vector2(value.X / GUI.ScaleX(), value.Y / GUI.ScaleY());
+            get
+            {
+                var basePos = new Vector2(GUI.SS(_basePosition.X), GUI.SSY(_basePosition.Y));
+                if (Parent != null)
+                    basePos += Parent.Position;
+                return basePos;
+            }
+            set
+            {
+                if (Parent != null)
+                    value -= Parent.Position;
+                _basePosition = new Vector2(value.X / GUI.ScaleX(), value.Y / GUI.ScaleY());
+            }
         }
 
         public Vector2 Size
@@ -27,8 +49,10 @@ namespace Game2D.Gui
             set => _baseSize = new Vector2(value.X / GUI.ScaleX(), value.Y / GUI.ScaleY());
         }
 
-        public Panel(float width, float height, Action<Panel> onDraw = null)
+        public Panel(Panel parent, float width, float height, Action<Panel> onDraw = null)
         {
+            Parent = parent;
+
             _baseSize = new Vector2(width, height);
             _basePosition = Vector2.Zero;
 
@@ -37,10 +61,21 @@ namespace Game2D.Gui
 
             Program.Hoverables.Add(this);
             GUI.Panels.Add(this);
+            Parent?.AddChild(this);
+        }
+
+        ~Panel() { Destroy(); }
+
+        public void AddChild(Panel panel)
+        {
+            Children.Add(panel);
+            panel.ZIndex += ZIndex + 1;
         }
 
         public void Update()
         {
+            if (!IsEnabled) return;
+
             Rect.Position = Position;
             Rect.Size = Size;
             OnUpdate();
@@ -48,6 +83,8 @@ namespace Game2D.Gui
 
         public void Draw()
         {
+            if (!IsEnabled) return;
+
             if (CustomDraw == null)
                 OnDraw();
             else
@@ -56,8 +93,13 @@ namespace Game2D.Gui
 
         public void Destroy()
         {
+            foreach (var child in Children)
+                child.Destroy();
+
             OnDestroy();
             GUI.Panels.Remove(this);
+            Program.Hoverables.Remove(this);
+            Parent?.Children.Remove(this);
         }
 
         protected virtual void OnUpdate() { }

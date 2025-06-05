@@ -32,6 +32,12 @@ namespace Game2D.Survival
         protected override void OnDraw()
         {
             base.OnDraw();
+
+            var item = Inventory.Slots[SelectedSlot].Item;
+            if (item != null)
+            {
+                item.Sprite.Draw(Position-item.HoldOffset, 1.2f, item.HoldRotation);
+            }
         }
     }
 }

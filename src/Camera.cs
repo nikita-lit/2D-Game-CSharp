@@ -1,4 +1,5 @@
-﻿using Game2D.Utils;
+﻿using Game2D.Entities;
+using Game2D.Utils;
 
 namespace Game2D
 {
@@ -6,15 +7,18 @@ namespace Game2D
     {
         public Camera2D Handle;
 
+        public Entity FollowTarget;
+
         private const float SPEED = 600f;
         private const int BOUNDS = 400;
 
         private const float SPEED_ZOOM = 0.1f;
-        private const float MIN_ZOOM = 0.8f;
+        private const float MIN_ZOOM = 0.6f;
         private const float MAX_ZOOM = 2.0f;
 
         private static float _followScale = 0;
-        private Vector2 _prevPlayerPos;
+        private static float _followScaleTime = 0;
+        private Vector2 _prevTargetPos;
         private static double _lastZoomTime = 0;
 
         private float Zoom = 1.0f;
@@ -47,28 +51,45 @@ namespace Game2D
 
         public void Update()
         {
-            var playerPos = Program.Player.Position;
+            if (FollowTarget != null)
+                DoFollowTarget();
 
-            if(_prevPlayerPos != playerPos)
+            UpdateZoom();
+        }
+
+        public void DoFollowTarget()
+        {
+            var targetPos = FollowTarget.Position;
+
+            if (_prevTargetPos != targetPos)
             {
-                _prevPlayerPos = playerPos;
+                _prevTargetPos = targetPos;
                 _lastZoomTime = Raylib.GetTime();
             }
 
-            var x = Math.Abs(MathX.Map((Target.X - playerPos.X), -500, 500, -1, 1));
-            var y = Math.Abs(MathX.Map((Target.Y - playerPos.Y), -500, 500, -1, 1));
+            var x = Math.Abs(MathX.Map((Target.X - targetPos.X), -500, 500, -1, 1));
+            var y = Math.Abs(MathX.Map((Target.Y - targetPos.Y), -500, 500, -1, 1));
             var scale = (x + y);
 
-            if ((x <= 0.15f && y <= 0.15f))
+            var bounds = 0.15f;
+            var followScaleTime = 4f;
+
+            if (Raylib.IsCursorHidden())
+            {
+                bounds = 0.05f;
+                followScaleTime = 25f;
+            }
+
+            if ((x <= bounds && y <= bounds))
                 scale = 0;
 
             _followScale = float.Lerp(_followScale, scale, Raylib.GetFrameTime() * 2f);
+            _followScaleTime = float.Lerp(_followScaleTime, followScaleTime, Raylib.GetFrameTime() * 4f);
+
             if (_lastZoomTime > Raylib.GetTime())
                 _followScale = 0;
 
-            Target = Vector2.Lerp(Target, playerPos, Raylib.GetFrameTime() * _followScale * 4f);
-
-            UpdateZoom();
+            Target = Vector2.Lerp(Target, targetPos, Raylib.GetFrameTime() * _followScale * _followScaleTime);
 
             if (Raylib.IsKeyDown(KeyboardKey.Up))
             {
@@ -92,7 +113,7 @@ namespace Game2D
                 _lastZoomTime = Raylib.GetTime() + 4f;
             }
 
-            Target = Vector2.Clamp(Target, playerPos + new Vector2(-BOUNDS, -BOUNDS), playerPos + new Vector2(BOUNDS, BOUNDS));
+            Target = Vector2.Clamp(Target, targetPos + new Vector2(-BOUNDS, -BOUNDS), targetPos + new Vector2(BOUNDS, BOUNDS));
         }
 
         private void UpdateZoom()
@@ -100,14 +121,14 @@ namespace Game2D
             LerpZoom = float.Lerp(LerpZoom, Zoom, Raylib.GetFrameTime() * 8f);
             Handle.Zoom = BaseZoom * LerpZoom;
 
-            if (Raylib.IsKeyPressed(KeyboardKey.R))
+            if (Raylib.IsKeyPressed(KeyboardKey.R) || Raylib.IsCursorHidden())
             {
                 Zoom = 1.0f;
                 _lastZoomTime = Raylib.GetTime();
             }
 
             float wheel = Raylib.GetMouseWheelMove();
-            if (wheel == 0) return;
+            if (wheel == 0 || Raylib.IsCursorHidden()) return;
 
             Vector2 mouseWorldBefore = Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Handle);
 

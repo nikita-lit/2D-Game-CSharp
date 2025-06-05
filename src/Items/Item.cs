@@ -4,26 +4,21 @@ using Game2D.Interfaces;
 
 namespace Game2D.Items
 {
-    public class Item : Entity
+    public abstract class Item : Entity
     {
         public override EntityID EntityID => EntityID.Item;
 
-        private const float SIZE = 2.0f;
-        private readonly Sprite _sprite;
-        private readonly WorldClickable _clickable;
+        public virtual string Name => "Item";
+        public virtual Vector2 HoldOffset => new Vector2(0, 0);
+        public virtual float HoldRotation => 0.0f;
+
+        public virtual float SpriteSize { get; private set; } = 2.0f;
+        public Sprite Sprite;
+        protected WorldClickable _clickable;
 
         public Item(Vector2 position)
             : base(position)
         {
-            _sprite = new Sprite("../../assets/textures/tree.png");
-            Collider = new RectCollider() {
-                Rect = new Rectangle((int)Position.X - (20 / 2), (int)Position.Y - (20 / 2), 20, 20),
-            };
-
-            _clickable = new WorldClickable(
-                new Rectangle((int)Position.X, (int)Position.Y, 40, 40),
-                () => !HasFlag(EntityFlag.NotUsable),
-                OnUse);
         }
 
         protected override void OnUpdate()
@@ -34,12 +29,7 @@ namespace Game2D.Items
 
         protected override void OnDraw()
         {
-            var texturOffset = new Vector2(
-                (_sprite.Width * SIZE) / 2,
-                (_sprite.Height * SIZE) / 2
-            );
-
-            Raylib.DrawTextureEx(_sprite.Texture, Position- texturOffset, 0.0f, SIZE, Color.White);
+            Sprite.Draw(Position);
             _clickable.Draw();
         }
 

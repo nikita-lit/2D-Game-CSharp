@@ -1,15 +1,13 @@
-﻿using Game2D.Utils;
-using Game2D.Classes;
+﻿using Game2D.Classes;
+using Game2D.Gui;
+using Game2D.Utils;
+using Game2D.Render;
 
 namespace Game2D.Entities
 {
     public class Campfire : Entity
     {
         public override EntityID EntityID => EntityID.Campfire;
-
-        private const float TILE_SIZE = 32f;
-        private const float SIZE = 2f;
-        private const float SPRITE_SIZE = TILE_SIZE * SIZE;
 
         private Sprite _sprite;
         private Sprite _spriteFire;
@@ -29,14 +27,18 @@ namespace Game2D.Entities
             Radius = 300f;
 
             _sprite = new Sprite("campfire.png");
+            _sprite.Size = 2.0f;
+
             _spriteFire = new Sprite("campfire_fire.png");
+            _spriteFire.Size = 2.0f;
 
             Collider = new RectCollider() {
                 Rect = new Rectangle((int)Position.X - (25 / 2), (int)Position.Y - (25 / 2), 25, 25),
+                IsStatic = true,
             };
 
             _clickable = new WorldClickable(
-                new Rectangle((int)Position.X - (50 / 2), (int)Position.Y - (50 / 2), 50, 50),
+                new Rectangle(0, 0, 60, 30),
                 () => (!HasFlag(EntityFlag.NotUsable) && Fuel > 0),
                 OnUse);
 
@@ -81,13 +83,14 @@ namespace Game2D.Entities
 
         protected override void OnDraw()
         {
-            var textureOffset = new Vector2(
-                SPRITE_SIZE/2,
-                SPRITE_SIZE/2
-            );
+            if (IsLit)
+                _spriteFire.Draw(Position - new Vector2(0, 30));
+            else
+                _sprite.Draw(Position - new Vector2(0, 30));
 
-            Raylib.DrawTextureEx((IsLit ? _spriteFire.Texture : _sprite.Texture), Position - textureOffset, 0.0f, SIZE, Color.White);
-            Raylib.DrawText(Fuel.ToString(), (int)Position.X, (int)Position.Y, 26, Color.White);
+            if (_clickable.IsHovered())
+                Render.Draw.AlignedText(Fuel.ToString(), _clickable.RectCenter, "PixelBold", 26,
+                    Color.White, hAlign: HorizontalAlign.Center, vAlign: VerticalAlign.Center);
 
             _clickable.Draw();
         }

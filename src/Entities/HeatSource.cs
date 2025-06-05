@@ -50,7 +50,7 @@ namespace Game2D.Entities
             if(IsEnabled)
                 _zone.Draw();
 
-            Raylib.DrawCircle((int)_zone.Center.X, (int)_zone.Center.Y, 5, Color.Red);
+            //Raylib.DrawCircle((int)_zone.Center.X, (int)_zone.Center.Y, 5, Color.Red);
         }
     }
 }

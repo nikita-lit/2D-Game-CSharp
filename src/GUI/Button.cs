@@ -11,20 +11,24 @@ namespace Game2D.Gui
         public event Action<Button, Entity, MouseButton> OnRelease;
 
         public bool CanUse() => CanUseFunc == null || CanUseFunc();
+        public override MouseCursor Cursor { get; set; } = MouseCursor.PointingHand;
 
         public Button(
+            Panel parent,
             float width,
             float height,
             Func<bool> canUseFunc = null,
             Action<Panel> onDraw = null
-        ) : base(width, height, onDraw)
+        ) : base(parent, width, height, onDraw)
         {
             CanUseFunc = canUseFunc;
+            if (CanUseFunc == null)
+                CanUseFunc = () => IsEnabled;
         }
 
         protected override void OnUpdate()
         {
-            if (!CanUse())
+            if (!CanUse() || Program.Focus != this)
                 return;
 
             if (IsHovered())

@@ -6,10 +6,11 @@
         public float Width => Rect.Width;
         public float Height => Rect.Height;
         public Vector2 HalfRect => new Vector2(Width / 2, Height / 2);
+        public Vector2 RectCenter => Rect.Position - new Vector2(Width / 2, Height / 2);
 
         public override bool CheckCollision(Collider other) 
         { 
-            if (!Active) return false;
+            if (!IsActive) return false;
 
             if(other == this) 
                 return false;

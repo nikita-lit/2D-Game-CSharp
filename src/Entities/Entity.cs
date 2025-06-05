@@ -11,6 +11,8 @@ namespace Game2D.Entities
         Campfire,
         HeatSource,
         Item,
+        Log,
+        Axe,
     }
 
     [Flags]
@@ -55,7 +57,7 @@ namespace Game2D.Entities
                 RectCollider.Rect.Position = Position - RectCollider.HalfRect;
                
             if(Collider != null)
-                Collider.Active = !HasFlag(EntityFlag.DontCollide);
+                Collider.IsActive = !HasFlag(EntityFlag.DontCollide);
 
             OnUpdate();
         }
@@ -65,10 +67,8 @@ namespace Game2D.Entities
             if (!Flags.HasFlag(EntityFlag.NoDraw))
                 OnDraw();
 
-            if (Collider is RectCollider rectCollider)
-            {
-                Raylib.DrawRectangleLinesEx(rectCollider.Rect, 1.0f, (rectCollider.Active ? Color.White : Color.Gray));
-            }
+            //if (Collider is RectCollider rectCollider)
+            //    Raylib.DrawRectangleLinesEx(rectCollider.Rect, 1.0f, (rectCollider.IsActive ? Color.LightGray : Color.Gray));
         }
 
         public void Destroy()
@@ -87,11 +87,11 @@ namespace Game2D.Entities
 
         public override bool Equals(object obj)
         {
-            if (obj == null || this.GetType() != obj.GetType())
+            if (obj == null || GetType() != obj.GetType())
                 return false;
 
             Entity other = (Entity)obj;
-            return this.ID == other.ID;
+            return ID == other.ID;
         }
 
         public override int GetHashCode()

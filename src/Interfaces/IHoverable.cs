@@ -4,5 +4,6 @@
     {
         public MouseCursor Cursor { get; set; }
         public bool IsHovered();
+        int ZIndex { get; }
     }
 }

@@ -5,6 +5,8 @@ namespace Game2D.Gui
 {
     public static partial class GUI
     {
+        public static Panel Root;
+
         public static readonly Vector2 DesignResolution = new(1920, 1080);
 
         public static float SrcW() => Program.ScreenSize.X;
@@ -26,9 +28,15 @@ namespace Game2D.Gui
 
         public static void Init()
         {
-            HUD = new HUD();
+            Root = new Panel(null, SrcW(), SrcH());
+            Root.IsInteractive = false;
+
+            HUD = new HUD(Root);
+            HUD.Root.IsInteractive = false;
+
             AssetsSystem.LoadFont("Pixel", "PixelOperator.ttf");
             AssetsSystem.LoadFont("PixelBold", "PixelOperator-Bold.ttf");
+            //_ = new TTT.TicTacToe(Root, SrcW(), SrcH());
             Program.OnScreenResize += OnScreenResize;
         }
 
