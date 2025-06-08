@@ -22,7 +22,7 @@ namespace Game2D
         public static void Main()
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
-            Raylib.InitWindow(1920, 1080, "2D Game");
+            Raylib.InitWindow(1280, 720, "2D Game");
 
             ScreenSize.X = Raylib.GetScreenWidth();
             ScreenSize.Y = Raylib.GetScreenHeight();

@@ -10,13 +10,13 @@ namespace Game2D.Gui
 
         public HUD(Panel root)
         {
-            Root = new Panel(root, GUI.SrcW(), GUI.SrcH());
+            Root = new Panel(root, GUI.OSrcW(), GUI.OSrcH());
 
-            float slotSize = 80f;
-            float slotSpacing = 10f;
+            float slotSize = 50f;
+            float slotSpacing = 5f;
             float slotWidth = slotSize + slotSpacing;
 
-            float slotsOffset = (GUI.SrcW()/2) - ((slotWidth * Player.INVENTORY_SLOTS_COUNT) / 2f);
+            float slotsOffset = (GUI.OSrcW()/2) - ((slotWidth * Player.INVENTORY_SLOTS_COUNT) / 2f);
             var survPlayer = (GUI.LocalPlayer() as SurvivalPlayer);
 
             for (int i = 0; i < Player.INVENTORY_SLOTS_COUNT; i++)
@@ -30,10 +30,13 @@ namespace Game2D.Gui
                         player.SelectedSlot = sloticon.Slot.ID;
                 };
 
-                slot.Position = new Vector2(
+                slot.BasePosition = new Vector2(
                     slotsOffset + (slotWidth * i),
-                    GUI.SrcH() - (slotSize + 10f)
+                    GUI.OSrcH() - slotSize
                 );
+
+                Console.WriteLine(slot.Rect);
+                Console.WriteLine();
 
                 _slots.Add(slot);
             }

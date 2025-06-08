@@ -7,13 +7,14 @@ namespace Game2D.Gui
     {
         public static Panel Root;
 
-        public static readonly Vector2 DesignResolution = new(1920, 1080);
-
         public static float SrcW() => Program.ScreenSize.X;
         public static float SrcH() => Program.ScreenSize.Y;
 
-        public static float ScaleX() => SrcW() / DesignResolution.X;
-        public static float ScaleY() => SrcH() / DesignResolution.Y;
+        public static float OSrcW() => 640.0f;
+        public static float OSrcH() => 480.0f;
+
+        public static float ScaleX() => SrcW() / OSrcW();
+        public static float ScaleY() => SrcH() / OSrcH();
 
         public static float SS(float x) => x * ScaleX();
         public static int SS(int x) => (int)(x * ScaleX());

@@ -34,11 +34,11 @@ namespace Game2D.Gui
             {
                 var sprite = Slot.Item.Sprite;
                 var textureOffset = new Vector2(
-                    (sprite.Width * 2.0f) / 2.0f,
-                    (sprite.Height * 2.0f) / 2.0f
+                    (sprite.Width * GUI.SS(2)) / 2.0f,
+                    (sprite.Height * GUI.SS(2)) / 2.0f
                 );
 
-                Raylib.DrawTextureEx(sprite.Texture, RectCenter - textureOffset, 0.0f, 2.0f, Color.White);
+                Raylib.DrawTextureEx(sprite.Texture, RectCenter - textureOffset, 0.0f, GUI.SS(2), Color.White);
 
                 Render.Draw.AlignedText(Slot.Item.Name, RectCenter + new Vector2(0, (Rect.Height/2)-GUI.SS(5)), "Pixel", 28, 
                     Color.White, hAlign: HorizontalAlign.Center, vAlign: VerticalAlign.Bottom);
