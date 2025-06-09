@@ -30,7 +30,7 @@ namespace Game2D.Gui
             set
             {
                 _basePosition = value;
-                Position = new Vector2(GUI.SS(_basePosition.X), GUI.SS(_basePosition.Y));
+                Position = new Vector2(GUI.SS(_basePosition.X), GUI.SSY(_basePosition.Y));
                 Rect.X = Position.X; Rect.Y = Position.Y;
             }
         }
@@ -53,7 +53,7 @@ namespace Game2D.Gui
             set
             {
                 _baseSize = value;
-                Size = new Vector2(GUI.SS(_baseSize.X), GUI.SS(_baseSize.Y));
+                Size = new Vector2(GUI.SS(_baseSize.X), GUI.SSY(_baseSize.Y));
                 Rect.Width = Size.X; Rect.Height = Size.Y;
             }
         }
@@ -127,8 +127,8 @@ namespace Game2D.Gui
         protected virtual void OnDestroy() { }
         public virtual void OnScreenResize(Vector2 oldSize, Vector2 newSize) 
         {
-            Position = new Vector2(GUI.SS(_basePosition.X), GUI.SS(_basePosition.Y));
-            Size = new Vector2(GUI.SS(_baseSize.X), GUI.SS(_baseSize.Y));
+            Position = new Vector2(GUI.SS(_basePosition.X), GUI.SSY(_basePosition.Y));
+            Size = new Vector2(GUI.SS(_baseSize.X), GUI.SSY(_baseSize.Y));
 
             Rect.X = Position.X;
             Rect.Y = Position.Y;

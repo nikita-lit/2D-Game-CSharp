@@ -23,20 +23,28 @@ namespace Game2D.Entities
         DontCollide = 1 << 2,
     }
 
-    public class Entity
+    public class Entity : IDisposable
     {
         public virtual EntityID EntityID => EntityID.None;
         public EntityFlag Flags;
 
-        public World World { get; set; }
-        public Entity Parent { get; set; }
+        public Guid ID;
+
+        public World World;
+        public Entity Parent;
 
         public Collider Collider;
         public RectCollider RectCollider => Collider as RectCollider;
 
         public Vector2 Position;
         public Vector2 Velocity;
-        public Guid ID;
+
+        private float _rotation = 0.0f;
+        public float Rotation 
+        {
+            get => _rotation;
+            set { _rotation = ((value + 180) % 360 + 360) % 360 - 180; }
+        }
 
         public Entity(Vector2 position)
         {
@@ -46,11 +54,9 @@ namespace Game2D.Entities
             Program.World.Entities.Add(ID, this);
         }
 
-        ~Entity() { Destroy(); }
-
         public void Update() 
         {
-            if(Parent != null) 
+            if (Parent != null) 
                 Position = Parent.Position;
 
             if(RectCollider != null)
@@ -71,9 +77,13 @@ namespace Game2D.Entities
             //    Raylib.DrawRectangleLinesEx(rectCollider.Rect, 1.0f, (rectCollider.IsActive ? Color.LightGray : Color.Gray));
         }
 
+        public void Dispose() => Destroy();
         public void Destroy()
         {
             OnDestroy();
+            Parent = null;
+            World = null;
+            Collider = null;
             Program.World.Entities.Remove(ID);
         }
 

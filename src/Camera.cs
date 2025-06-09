@@ -71,13 +71,13 @@ namespace Game2D
             var y = Math.Abs(MathX.Map((Target.Y - targetPos.Y), -500, 500, -1, 1));
             var scale = (x + y);
 
-            var bounds = 0.15f;
+            var bounds = 0.1f;
             var followScaleTime = 4f;
 
             if (Raylib.IsCursorHidden())
             {
                 bounds = 0.05f;
-                followScaleTime = 25f;
+                followScaleTime = 60f;
             }
 
             if ((x <= bounds && y <= bounds))
@@ -123,7 +123,7 @@ namespace Game2D
 
             if (Raylib.IsKeyPressed(KeyboardKey.R) || Raylib.IsCursorHidden())
             {
-                Zoom = 1.0f;
+                Zoom = (Raylib.IsCursorHidden() ? 1.3f : 1.0f);
                 _lastZoomTime = Raylib.GetTime();
             }
 

@@ -75,8 +75,6 @@ namespace Game2D.Entities
             }
 
             _heatSource.IsEnabled = IsLit;
-            _heatSource.Update();
-
             _clickable.Position = Position;
             _clickable.Update();
         }
@@ -90,9 +88,15 @@ namespace Game2D.Entities
 
             if (_clickable.IsHovered())
                 Render.Draw.AlignedText(Fuel.ToString(), _clickable.RectCenter, "PixelBold", 26,
-                    Color.White, hAlign: HorizontalAlign.Center, vAlign: VerticalAlign.Center);
+                    Color.White, scaleFont: false, hAlign: HorizontalAlign.Center, vAlign: VerticalAlign.Center);
 
             _clickable.Draw();
+        }
+
+        protected override void OnDestroy()
+        {
+            _clickable.Dispose();
+            _clickable = null;
         }
     }
 }

@@ -43,10 +43,15 @@ namespace Game2D.Render
             float rotation = 0.0f,
             float spacing = 0.0f,
             HorizontalAlign hAlign = HorizontalAlign.Left,
-            VerticalAlign vAlign = VerticalAlign.Top)
+            VerticalAlign vAlign = VerticalAlign.Top,
+            bool scaleFont = true)
         {
             var font = AssetsSystem.GetFont(fontName);
-            var scaledFontSize = (int)(fontSize * GUI.ScaleY());
+            var scaledFontSize = fontSize;
+
+            if (scaleFont)
+                scaledFontSize = (int)(fontSize * GUI.ScaleY());
+
             var textSize = Raylib.MeasureTextEx(font, text, scaledFontSize, spacing);
             var origin = Vector2.Zero;
 

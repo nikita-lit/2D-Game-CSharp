@@ -16,6 +16,14 @@ namespace Game2D.Items
         public Sprite Sprite;
         protected WorldClickable _clickable;
 
+        public int Stack = 1;
+        public virtual int MaxStack => -1;
+        public bool CanStack(Item item) =>
+            item != null
+            && MaxStack > 1
+            && Stack < MaxStack 
+            && item.GetType() == GetType();
+
         public Item(Vector2 position)
             : base(position)
         {
@@ -23,8 +31,8 @@ namespace Game2D.Items
 
         protected override void OnUpdate()
         {
-            _clickable.Update();
             _clickable.Position = Position;
+            _clickable.Update();
         }
 
         protected override void OnDraw()
@@ -33,12 +41,26 @@ namespace Game2D.Items
             _clickable.Draw();
         }
 
+        protected override void OnDestroy()
+        {
+            _clickable.Dispose();
+            _clickable = null;
+        }
+
         public virtual void OnUse(Entity user)
         {
             if (user is not IHasInventory userInv)
                 return;
 
             userInv.Inventory.PickUpItem(this);
+        }
+
+        public virtual Item Clone()
+        {
+            var constructor = GetType().GetConstructor([typeof(Vector2)]);
+            var newItem = (Item)constructor.Invoke([Position]);
+            newItem.Stack = 1;
+            return newItem;
         }
     }
 }

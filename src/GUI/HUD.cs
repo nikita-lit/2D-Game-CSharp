@@ -32,11 +32,8 @@ namespace Game2D.Gui
 
                 slot.BasePosition = new Vector2(
                     slotsOffset + (slotWidth * i),
-                    GUI.OSrcH() - slotSize
+                    (GUI.OSrcH() - slotSize) - slotSpacing
                 );
-
-                Console.WriteLine(slot.Rect);
-                Console.WriteLine();
 
                 _slots.Add(slot);
             }
@@ -49,35 +46,46 @@ namespace Game2D.Gui
 
         public void Draw()
         {
-            var pos = new Vector2(GUI.SS(20), GUI.SS(15));
+            var pos = new Vector2(GUI.SS(15), GUI.SS(15));
 
             Render.Draw.AlignedText("HP: " + Program.Player.Vitals.Health,
-                pos, "PixelBold", 36, Color.White);
+                pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(35);
+            pos.Y += GUI.SS(20);
 
             Render.Draw.AlignedText("C: " + Program.World.Weather.Temperature,
-                pos, "PixelBold", 36, Color.White);
+                pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(35);
+            pos.Y += GUI.SS(20);
 
             Render.Draw.AlignedText("Body C: " + Program.Player.Vitals.Temperature.ToString("0.0"),
-                pos, "PixelBold", 36, Color.White);
+                pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(35);
+            pos.Y += GUI.SS(20);
 
             Render.Draw.AlignedText("Entities: " + Program.World.Entities.Count,
-                pos, "PixelBold", 36, Color.White);
+                pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(35);
+            pos.Y += GUI.SS(20);
 
             Render.Draw.AlignedText("HeatSource: " + Program.Player.Vitals.IsNearToHeatSource,
-                pos, "PixelBold", 36, Color.White);
+                pos, "PixelBold", 26, Color.White);
+
+            pos.Y += GUI.SS(20);
+
+            Render.Draw.AlignedText("Pos: " + Program.Player.Position.ToString("0.00"),
+                pos, "PixelBold", 26, Color.White);
         }
 
         public void OnScreenResize(Vector2 oldSize, Vector2 newSize)
         {
-
+            Console.WriteLine();
+            foreach (var slot in _slots)
+            {
+                Console.WriteLine();
+                Console.WriteLine(slot.Rect);
+            }
+            Console.WriteLine();
         }
     }
 }

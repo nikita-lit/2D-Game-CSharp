@@ -3,7 +3,7 @@ using Game2D.Interfaces;
 
 namespace Game2D.Classes
 {
-    public class WorldClickable : IHoverable
+    public class WorldClickable : IHoverable, IDisposable
     {
         public Vector2 Position;
         public Vector2 Offset;
@@ -18,7 +18,7 @@ namespace Game2D.Classes
         public bool CanUse() => CanUseFunc != null && CanUseFunc();
         public float UseDistance = 200.0f;
 
-        public bool IsHovered() => CanUse() 
+        public bool IsHovered() => CanUse()
             && !Raylib.IsCursorHidden()
             && Raylib.CheckCollisionPointRec(Program.GetMouseWorldPos(), Rect) 
             && (Program.Player.Position - Position).Length() < UseDistance;
@@ -56,9 +56,12 @@ namespace Game2D.Classes
         public void Draw()
         {
             //Raylib.DrawRectangleLinesEx(Rect, 1.0f, (CanUse() ? Color.Lime : Color.Red));
+            //Raylib.DrawRectangleLinesEx(Rect, 1.0f, (ReferenceEquals(Program.Focus, this) ? Color.Lime : Color.Red));
 
-            if(IsHovered())
+            if(IsHovered() && Program.Focus == this)
                 Render.Draw.CornerHighlights(Rect, 1, 8);
         }
+
+        public void Dispose() => Program.Hoverables.Remove(this);
     }
 }

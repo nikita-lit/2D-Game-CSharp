@@ -1,46 +1,35 @@
-﻿using Game2D.Classes;
+﻿using Game2D.Environment;
 using Game2D.Gui;
 
-namespace Game2D
+namespace Game2D.Render
 {
-    partial class Program
+    public class Renderer
     {
-        public static RenderTexture2D RenderTarget;
-        //public static RenderTexture2D RenderTarget2;
+        public RenderTexture2D RenderTarget;
 
-        public static void InitRender()
+        public void Init(Vector2 screenSize)
         {
-            RenderTarget = Raylib.LoadRenderTexture((int)ScreenSize.X, (int)ScreenSize.Y);
-            //RenderTarget2 = Raylib.LoadRenderTexture((int)ScreenSize.X, (int)ScreenSize.Y);
+            RenderTarget = Raylib.LoadRenderTexture((int)screenSize.X, (int)screenSize.Y);
         }
 
-        public static void ReloadRenderTarget()
+        public void ReloadRenderTarget(Vector2 screenSize)
         {
             Raylib.UnloadRenderTexture(RenderTarget);
-            //Raylib.UnloadRenderTexture(RenderTarget2);
-            RenderTarget = Raylib.LoadRenderTexture((int)ScreenSize.X, (int)ScreenSize.Y);
-            //RenderTarget2 = Raylib.LoadRenderTexture((int)ScreenSize.X, (int)ScreenSize.Y);
+            RenderTarget = Raylib.LoadRenderTexture((int)screenSize.X, (int)screenSize.Y);
         }
 
-        public static void Render()
+        public void Do(Camera camera, World world)
         {
             Raylib.BeginTextureMode(RenderTarget);
                 Raylib.ClearBackground(Color.Black);
 
-                Raylib.BeginMode2D(Camera.Handle);
-                    DrawWorld();
+                Raylib.BeginMode2D(camera.Handle);
+                    DrawWorld(world);
                 Raylib.EndMode2D();
 
                 DrawScreen();
             Raylib.EndTextureMode();
 
-            //Raylib.BeginTextureMode(RenderTarget2);
-            //    Raylib.ClearBackground(Color.SkyBlue);
-
-            //    Raylib.BeginMode2D(Camera2.Handle);
-            //        DrawWorld();
-            //    Raylib.EndMode2D();
-            //Raylib.EndTextureMode();
 
             Raylib.BeginDrawing();
                 var texture = RenderTarget.Texture;
@@ -55,7 +44,7 @@ namespace Game2D
             Raylib.EndDrawing();
         }
 
-        public static void DrawScreen()
+        public void DrawScreen()
         {
             GUI.Draw();
 
@@ -63,10 +52,11 @@ namespace Game2D
             //    Raylib.DrawRectangleLinesEx(panel.Rect, 1.0f, Color.Orange);
         }
 
-        public static void DrawWorld()
+        public void DrawWorld(World world)
         {
             Raylib.DrawRectangle(-500, -500, 1000, 1000, Color.DarkGray);
-            foreach (var pair in World.Entities.OrderBy(e => e.Value.Position.Y))
+
+            foreach (var pair in world.Entities.OrderBy(e => e.Value.Position.Y))
             {
                 pair.Value.Draw();
             }

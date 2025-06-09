@@ -9,18 +9,18 @@ namespace Game2D.Entities
 
         public override EntityID EntityID => EntityID.Player;
 
-        private const float SIZE = 5.0f;
-        private const float SPEED = 300f;
+        public virtual float Speed => 150f;
+        public virtual float WalkFactor => 1.0f;
+        public virtual float RunFactor => 1.5f;
 
         public Inventory Inventory { get; private set; }
         public int SelectedSlot = 0;
 
-        private readonly Sprite _sprite;
+        private float _targetRotation = 0.0f;
 
         public Player(Vector2 position) 
             : base(position)
         {
-            _sprite = new Sprite("../../assets/textures/player.png");
             Collider = new RectCollider() {
                 Rect = new Rectangle(0, 0, 50, 50),
             };
@@ -41,26 +41,18 @@ namespace Game2D.Entities
             if (input != Vector2.Zero)
             {
                 input = Vector2.Normalize(input);
-                float runFactor = 1.0f;
+                float runFactor = WalkFactor;
                 if (Raylib.IsKeyDown(KeyboardKey.LeftShift))
-                    runFactor = 1.5f;
+                    runFactor = RunFactor;
 
-                Velocity = input * SPEED * runFactor;
+                Velocity = input * Speed * runFactor;
+                _targetRotation = MathF.Atan2(input.Y, input.X) * Raylib.RAD2DEG + -90f;
             }
             else
                 Velocity = Vector2.Zero;
 
+            //Rotation = MathX.AngleLerp(Rotation, _targetRotation, dt * 10f);
             Position += Velocity * dt;
-        }
-
-        protected override void OnDraw()
-        {
-            var texturOffset = new Vector2(
-                (_sprite.Width * SIZE) / 2, 
-                (_sprite.Height * SIZE) / 2
-            );
-
-            Raylib.DrawTextureEx(_sprite.Texture, Position- texturOffset, 0.0f, SIZE, Color.White);
         }
     }
 }

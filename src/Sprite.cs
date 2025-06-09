@@ -2,7 +2,7 @@
 
 namespace Game2D
 {
-    public class Sprite
+    public class Sprite : IDisposable
     {
         public Texture2D Texture;
         public float Width => Texture.Width;
@@ -14,18 +14,29 @@ namespace Game2D
             Texture = AssetsSystem.LoadTexture(path);
         }
 
-        public void Draw(Vector2 position, float size = -1.0f, float rotation = 0.0f)
+        public void Draw(Vector2 position, float size = -1.0f, float rotation = 0.0f, bool invert = false)
         {
-            var _size = Size;
-            if(size != -1.0f)
-                _size = size;
+            float _size = size != -1.0f ? size : Size;
 
-            var textureOffset = new Vector2(
-                (Width * _size) / 2,
-                (Height * _size) / 2
+            Rectangle source = new Rectangle(
+                0,
+                0,
+                invert ? -Width : Width,
+                Height
             );
 
-            Raylib.DrawTextureEx(Texture, position - textureOffset, rotation, _size, Color.White);
+            Rectangle dest = new Rectangle(
+                position.X,
+                position.Y,
+                Width * _size,
+                Height * _size
+            );
+
+            Vector2 origin = new Vector2(dest.Width / 2f, dest.Height / 2f);
+            Raylib.DrawTexturePro(Texture, source, dest, origin, rotation, Color.White);
         }
+
+
+        public void Dispose() => Raylib.UnloadTexture(Texture);
     }
 }

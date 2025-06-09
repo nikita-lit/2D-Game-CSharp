@@ -5,6 +5,7 @@ using Game2D.Entities;
 using Game2D.Environment;
 using Game2D.Gui;
 using Game2D.Items;
+using Game2D.Render;
 using Game2D.Survival;
 
 namespace Game2D
@@ -16,41 +17,46 @@ namespace Game2D
         public static World World;
         public static SurvivalPlayer Player;
         public static Camera Camera;
+        public static Renderer Renderer;
 
         public static Vector2 GetMouseWorldPos() => Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Camera.Handle);
-
+ 
         public static void Main()
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
-            Raylib.InitWindow(1280, 720, "2D Game");
+            Raylib.InitWindow(1920, 1080, "2D Game");
 
             ScreenSize.X = Raylib.GetScreenWidth();
             ScreenSize.Y = Raylib.GetScreenHeight();
-
-            InitRender();
 
             World = new World();
             Player = new SurvivalPlayer(Vector2.Zero);
             Camera = new Camera(Vector2.Zero, new Vector2(ScreenSize.X / 2f, ScreenSize.Y / 2f));
             Camera.FollowTarget = Player;
 
+            //Vector2 center = new(0, 0);
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    float angle = (float)(Random.Shared.NextDouble() * 2 * Math.PI);
+            //    Console.WriteLine(angle);
+            //    float radius = 300 + (float)(Random.Shared.NextDouble() * 200);
+            //    float x = center.X + radius * MathF.Cos(angle);
+            //    float y = center.Y + radius * MathF.Sin(angle);
+
+            //    Vector2 pos = new(x, y);
+            //    _ = new Tree(pos);
+            //}
+
             _ = new Campfire(new Vector2(0, 100));
 
-            Vector2 center = new(0, 0);
-            for (int i = 0; i < 10; i++)
-            {
-                float angle = (float)(Random.Shared.NextDouble() * 2 * Math.PI);
-                Console.WriteLine(angle);
-                float radius = 300 + (float)(Random.Shared.NextDouble() * 200);
-                float x = center.X + radius * MathF.Cos(angle);
-                float y = center.Y + radius * MathF.Sin(angle);
-
-                Vector2 pos = new(x, y);
-                _ = new Tree(pos);
-            }
-
+            _ = new Log(new Vector2(25, 25));
+            _ = new Log(new Vector2(25, 25));
+            _ = new Log(new Vector2(25, 25));
             _ = new Log(new Vector2(25, 25));
             _ = new Axe(new Vector2(25, 25));
+
+            Renderer = new Renderer();
+            Renderer.Init(ScreenSize);
 
             GUI.Init();
             Run();
@@ -61,7 +67,7 @@ namespace Game2D
             while (!Raylib.WindowShouldClose())
             {
                 Update();
-                Render();
+                Renderer.Do(Camera, World);
             }
 
             Stop();
@@ -75,12 +81,12 @@ namespace Game2D
             if (Raylib.IsWindowResized() && !Raylib.IsWindowFullscreen())
             {
                 var newSize = new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
-                OnScreenResize?.Invoke(ScreenSize, newSize);
+                var oldSize = ScreenSize;
                 ScreenSize = newSize;
-                ReloadRenderTarget();
+                OnScreenResize?.Invoke(oldSize, newSize);
+                Renderer.ReloadRenderTarget(newSize);
             }
 
-            // collision detection
             var entities = World.Entities.Values.ToList();
             for (int i = 0; i < entities.Count; i++)
             {
@@ -133,6 +139,8 @@ namespace Game2D
 
         private static void ApplyPositionCorrection(Entity e1, Entity e2, Vector2 correction)
         {
+            if(e1.Collider == null || e2.Collider == null) return;
+
             bool e1Static = e1.Collider.IsStatic;
             bool e2Static = e2.Collider.IsStatic;
 

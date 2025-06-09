@@ -8,8 +8,9 @@ namespace Game2D.Items
         public override EntityID EntityID => EntityID.Log;
 
         public override string Name => "Log";
-        public override Vector2 HoldOffset => new Vector2(10, 0);
-        public override float HoldRotation => 25.0f;
+        public override Vector2 HoldOffset => new Vector2(8, -18);
+        public override float HoldRotation => 0.0f;
+        public override int MaxStack => 8;
 
         public Log(Vector2 position) 
             : base(position)

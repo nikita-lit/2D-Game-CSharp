@@ -17,20 +17,16 @@ namespace Game2D.Items
             }
         }
 
-        public void AttachItem(Item item)
+        protected void AttachItem(Item item)
         {
-            if (!Contains(item)) return;
-
             item.AddFlag(EntityFlag.NoDraw 
                 | EntityFlag.NotUsable 
                 | EntityFlag.DontCollide);
             item.Parent = Parent;
         }
 
-        public void DetachItem(Item item)
+        protected void DetachItem(Item item)
         {
-            if (!Contains(item)) return;
-
             item.RemoveFlag(EntityFlag.NoDraw 
                 | EntityFlag.NotUsable 
                 | EntityFlag.DontCollide);
@@ -38,8 +34,31 @@ namespace Game2D.Items
             item.Position = Parent.Position + new Vector2(45, 0);
         }
 
+        protected bool StackItem(Item itemA)
+        {
+            foreach (var slot in _slots)
+            {
+                var itemB = slot.Item;
+                if (itemB != null && itemB.CanStack(itemA))
+                {
+                    int amountToTransfer = Math.Min(itemA.Stack, itemB.MaxStack - itemB.Stack);
+                    itemB.Stack += amountToTransfer;
+                    itemA.Stack -= amountToTransfer;
+
+                    if (itemA.Stack <= 0)
+                        itemA.Destroy();
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public void PickUpItem(Item item)
         {
+            if (StackItem(item))
+                return;
+
             for(int i = 0; i < _slots.Count; i++)
             {
                 if (_slots[i].Item != null)
@@ -51,13 +70,13 @@ namespace Game2D.Items
             }
         }
 
-        public void InsertItem(int slot, Item item)
+        protected void InsertItem(int slot, Item item)
         {
             if (!IsSlotExists(slot)) return;
             _slots[slot].Item = item;        
         }
 
-        public void RemoveItem(int slot)
+        protected void RemoveItem(int slot)
         {
             if (!IsSlotExists(slot)) return;
             _slots[slot].Item = null;
@@ -68,7 +87,16 @@ namespace Game2D.Items
             if (!IsSlotExists(slot)) return;
 
             var item = _slots[slot].Item;
-            if(item != null)
+            if (item == null) return;
+
+            if (item.Stack > 1)
+            {
+                item.Stack--;
+
+                var droppedItem = item.Clone();
+                DetachItem(droppedItem);
+            }
+            else
             {
                 DetachItem(item);
                 RemoveItem(slot);

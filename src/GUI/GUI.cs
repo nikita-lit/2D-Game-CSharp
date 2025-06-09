@@ -10,8 +10,8 @@ namespace Game2D.Gui
         public static float SrcW() => Program.ScreenSize.X;
         public static float SrcH() => Program.ScreenSize.Y;
 
-        public static float OSrcW() => 640.0f;
-        public static float OSrcH() => 480.0f;
+        public static float OSrcW() => 1280.0f;
+        public static float OSrcH() => 720.0f;
 
         public static float ScaleX() => SrcW() / OSrcW();
         public static float ScaleY() => SrcH() / OSrcH();

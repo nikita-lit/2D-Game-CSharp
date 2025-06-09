@@ -4,13 +4,16 @@ using Game2D.Entities;
 
 namespace Game2D.Items
 {
-    public class Axe : Item
+    public class Axe : Tool
     {
         public override EntityID EntityID => EntityID.Axe;
 
         public override string Name => "Axe";
-        public override Vector2 HoldOffset => new Vector2(25, 2);
-        public override float HoldRotation => -10.0f;
+        public override Vector2 HoldOffset => new Vector2(8, -18);
+        public override float HoldRotation => 90.0f;
+
+        public override float PrimaryCooldown => 0.2f;
+        public override float SecondaryCooldown => -1.0f;
 
         public Axe(Vector2 position)
             : base(position)
@@ -27,6 +30,11 @@ namespace Game2D.Items
                 new Rectangle(0, 0, 50, 35),
                 () => !HasFlag(EntityFlag.NotUsable),
                 OnUse);
+        }
+
+        protected override void OnPrimary()
+        {
+            Console.WriteLine("OnPrimary");
         }
     }
 }
