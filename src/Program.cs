@@ -17,14 +17,21 @@ namespace Game2D
         public static World World;
         public static SurvivalPlayer Player;
         public static Camera Camera;
+        public static Camera TestCamera;
         public static Renderer Renderer;
+
+        public static RenderTexture2D MainRenderTexture;
+        public static RenderTexture2D TestRenderTexture;
+
+        public static bool IsDebug = true;
 
         public static Vector2 GetMouseWorldPos() => Raylib.GetScreenToWorld2D(Raylib.GetMousePosition(), Camera.Handle);
  
         public static void Main()
         {
             Raylib.SetConfigFlags(ConfigFlags.ResizableWindow);
-            Raylib.InitWindow(1920, 1080, "2D Game");
+            EnableVSync();
+            Raylib.InitWindow(1280, 720, "2D Game");
 
             ScreenSize.X = Raylib.GetScreenWidth();
             ScreenSize.Y = Raylib.GetScreenHeight();
@@ -33,6 +40,8 @@ namespace Game2D
             Player = new SurvivalPlayer(Vector2.Zero);
             Camera = new Camera(Vector2.Zero, new Vector2(ScreenSize.X / 2f, ScreenSize.Y / 2f));
             Camera.FollowTarget = Player;
+
+            TestCamera = new Camera(Vector2.Zero, new Vector2(256 / 2f, 256 / 2f));
 
             //Vector2 center = new(0, 0);
             //for (int i = 0; i < 10; i++)
@@ -49,14 +58,18 @@ namespace Game2D
 
             _ = new Campfire(new Vector2(0, 100));
 
-            _ = new Log(new Vector2(25, 25));
-            _ = new Log(new Vector2(25, 25));
-            _ = new Log(new Vector2(25, 25));
-            _ = new Log(new Vector2(25, 25));
-            _ = new Axe(new Vector2(25, 25));
+            //_ = new Log(new Vector2(25, 25));
+            //_ = new Log(new Vector2(25, 25));
+            //_ = new Log(new Vector2(25, 25));
+            //_ = new Log(new Vector2(25, 25));
+            //_ = new Axe(new Vector2(25, 25));
 
             Renderer = new Renderer();
-            Renderer.Init(ScreenSize);
+            if (!Renderer.Init())
+                throw new Exception("Couldnt init renderer!");
+
+            MainRenderTexture = Renderer.CreateRenderTexture("main", ScreenSize);
+            TestRenderTexture = Renderer.CreateRenderTexture("test", new Vector2(256, 256));
 
             GUI.Init();
             Run();
@@ -67,10 +80,39 @@ namespace Game2D
             while (!Raylib.WindowShouldClose())
             {
                 Update();
-                Renderer.Do(Camera, World);
+                Render();
             }
 
             Stop();
+        }
+
+        public static void Render()
+        {
+            Renderer.Do(TestRenderTexture, TestCamera, World, false);
+            Renderer.Do(MainRenderTexture, Camera, World);
+
+            Raylib.BeginDrawing();
+                var texture = MainRenderTexture.Texture;
+                Rectangle source = new Rectangle(0, 0, texture.Width, -texture.Height); // flip Y
+                Rectangle dest = new Rectangle(0, 0, texture.Width, texture.Height);
+                Raylib.DrawTexturePro(texture, source, dest, Vector2.Zero, 0.0f, Color.White);
+                
+                var texture2 = TestRenderTexture.Texture;
+                Rectangle source2 = new Rectangle(0, 0, texture2.Width, -texture2.Height); // flip Y
+                Rectangle dest2 = new Rectangle(0, 256, texture2.Width, texture2.Height);
+
+                //Raylib.BeginScissorMode(0, 256, texture2.Width, texture2.Height);
+                    Raylib.DrawTexturePro(texture2, source2, dest2, Vector2.Zero, 0.0f, Color.White);
+                //Raylib.EndScissorMode();
+            Raylib.EndDrawing();
+        }
+
+        public static bool VSyncEnabled = false;
+
+        public static void EnableVSync()
+        {
+            Raylib.SetConfigFlags(ConfigFlags.VSyncHint);
+            VSyncEnabled = true;
         }
 
         public static void Update()
@@ -84,7 +126,7 @@ namespace Game2D
                 var oldSize = ScreenSize;
                 ScreenSize = newSize;
                 OnScreenResize?.Invoke(oldSize, newSize);
-                Renderer.ReloadRenderTarget(newSize);
+                Renderer.ReloadRenderTarget("main", newSize);
             }
 
             var entities = World.Entities.Values.ToList();
@@ -135,6 +177,7 @@ namespace Game2D
             }
 
             Camera.Update();
+            TestCamera.Update();
         }
 
         private static void ApplyPositionCorrection(Entity e1, Entity e2, Vector2 correction)

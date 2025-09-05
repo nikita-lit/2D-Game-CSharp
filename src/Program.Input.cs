@@ -17,6 +17,9 @@ namespace Game2D
                     Raylib.DisableCursor();
             }
 
+            if (Raylib.IsKeyPressed(KeyboardKey.F1))
+                IsDebug = !IsDebug;
+
             if (Raylib.IsCursorHidden())
             {
                 Raylib.SetMousePosition((int)ScreenSize.X / 2, (int)ScreenSize.Y / 2);

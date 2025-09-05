@@ -73,8 +73,11 @@ namespace Game2D.Entities
             if (!Flags.HasFlag(EntityFlag.NoDraw))
                 OnDraw();
 
-            //if (Collider is RectCollider rectCollider)
-            //    Raylib.DrawRectangleLinesEx(rectCollider.Rect, 1.0f, (rectCollider.IsActive ? Color.LightGray : Color.Gray));
+            if(Program.IsDebug)
+            {
+                if (Collider is RectCollider rectCollider)
+                    Raylib.DrawRectangleLinesEx(rectCollider.Rect, 1.0f, (rectCollider.IsActive ? Color.LightGray : Color.Gray));
+            }
         }
 
         public void Dispose() => Destroy();

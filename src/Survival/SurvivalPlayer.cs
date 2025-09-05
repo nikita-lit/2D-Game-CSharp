@@ -7,7 +7,7 @@ namespace Game2D.Survival
 {
     public class SurvivalPlayer : Player, IHasInventory
     {
-        private const float SIZE = 1.5f;
+        private const float SIZE = 4f;
 
         public Vitals Vitals;
         public Sprite BodySprite;

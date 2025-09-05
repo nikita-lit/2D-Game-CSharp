@@ -1,4 +1,5 @@
-﻿using Game2D.Entities;
+﻿using Game2D.Assets;
+using Game2D.Entities;
 using Game2D.Survival;
 
 namespace Game2D.Gui
@@ -7,6 +8,7 @@ namespace Game2D.Gui
     {
         public Panel Root;
         private List<SlotIcon> _slots = new();
+        private bool _isDebugVisible = true;
 
         public HUD(Panel root)
         {
@@ -41,40 +43,67 @@ namespace Game2D.Gui
 
         public void Update()
         {
-
         }
 
         public void Draw()
         {
-            var pos = new Vector2(GUI.SS(15), GUI.SS(15));
+            if (Program.IsDebug)
+            {
+                var pos = new Vector2(GUI.SS(15), GUI.SS(15));
 
-            Render.Draw.AlignedText("HP: " + Program.Player.Vitals.Health,
-                pos, "PixelBold", 26, Color.White);
+                Render.Draw.AlignedText("HP: " + Program.Player.Vitals.Health,
+                    pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(20);
+                pos.Y += GUI.SS(20);
 
-            Render.Draw.AlignedText("C: " + Program.World.Weather.Temperature,
-                pos, "PixelBold", 26, Color.White);
+                Render.Draw.AlignedText("C: " + Program.World.Weather.Temperature,
+                    pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(20);
+                pos.Y += GUI.SS(20);
 
-            Render.Draw.AlignedText("Body C: " + Program.Player.Vitals.Temperature.ToString("0.0"),
-                pos, "PixelBold", 26, Color.White);
+                Render.Draw.AlignedText("Body C: " + Program.Player.Vitals.Temperature.ToString("0.0"),
+                    pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(20);
+                pos.Y += GUI.SS(20);
 
-            Render.Draw.AlignedText("Entities: " + Program.World.Entities.Count,
-                pos, "PixelBold", 26, Color.White);
+                Render.Draw.AlignedText("Entities: " + Program.World.Entities.Count,
+                    pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(20);
+                pos.Y += GUI.SS(20);
 
-            Render.Draw.AlignedText("HeatSource: " + Program.Player.Vitals.IsNearToHeatSource,
-                pos, "PixelBold", 26, Color.White);
+                Render.Draw.AlignedText("HeatSource: " + Program.Player.Vitals.IsNearToHeatSource,
+                    pos, "PixelBold", 26, Color.White);
 
-            pos.Y += GUI.SS(20);
+                pos.Y += GUI.SS(20);
 
-            Render.Draw.AlignedText("Pos: " + Program.Player.Position.ToString("0.00"),
-                pos, "PixelBold", 26, Color.White);
+                Render.Draw.AlignedText("Pos: " + Program.Player.Position.ToString("0.00"),
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(40);
+
+                Render.Draw.AlignedText("FPS: " + Raylib.GetFPS(),
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(20);
+
+                Render.Draw.AlignedText("VSync Enabled: " + Program.VSyncEnabled,
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(20);
+
+                Render.Draw.AlignedText("RT Count: " + Program.Renderer.RenderTextures.Count,
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(20);
+
+                Render.Draw.AlignedText("Textures Count: " + AssetsSystem.Textures.Count,
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(20);
+
+                Render.Draw.AlignedText("Fonts Count: " + AssetsSystem.Fonts.Count,
+                    pos, "PixelBold", 26, Color.White);
+            }
         }
 
         public void OnScreenResize(Vector2 oldSize, Vector2 newSize)

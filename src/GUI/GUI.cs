@@ -35,18 +35,17 @@ namespace Game2D.Gui
             HUD = new HUD(Root);
             HUD.Root.IsInteractive = false;
 
-            AssetsSystem.LoadFont("Pixel", "PixelOperator.ttf");
-            AssetsSystem.LoadFont("PixelBold", "PixelOperator-Bold.ttf");
+            AssetsSystem.RegisterFont("Pixel", "PixelOperator.ttf");
+            AssetsSystem.RegisterFont("PixelBold", "PixelOperator-Bold.ttf");
             //_ = new TTT.TicTacToe(Root, SrcW(), SrcH());
             Program.OnScreenResize += OnScreenResize;
         }
 
         public static void Update()
         {
+            HUD.Update();
             foreach(var panel in Panels)
-            {
                 panel.Update();
-            }
         }
 
         public static void Draw()

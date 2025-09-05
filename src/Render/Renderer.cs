@@ -5,43 +5,54 @@ namespace Game2D.Render
 {
     public class Renderer
     {
-        public RenderTexture2D RenderTarget;
+        public Dictionary<string, RenderTexture2D> RenderTextures = new();
 
-        public void Init(Vector2 screenSize)
+        public bool Init()
         {
-            RenderTarget = Raylib.LoadRenderTexture((int)screenSize.X, (int)screenSize.Y);
+            return true;
         }
 
-        public void ReloadRenderTarget(Vector2 screenSize)
+        public RenderTexture2D CreateRenderTexture(string name, Vector2 size)
         {
-            Raylib.UnloadRenderTexture(RenderTarget);
-            RenderTarget = Raylib.LoadRenderTexture((int)screenSize.X, (int)screenSize.Y);
+            bool isValid = RenderTextures.TryGetValue(name, out RenderTexture2D renderTexture);
+            bool isGPUValid = Raylib.IsRenderTextureValid(renderTexture);
+            if (!isValid && isGPUValid)
+                throw new Exception("Render texture loaded in GPU but not in dictionary.");
+
+            if (isValid && isGPUValid)
+                throw new Exception($"Render texture with name [{name}] already exists.");
+
+            RenderTextures[name] = renderTexture;
+            return Raylib.LoadRenderTexture((int)size.X, (int)size.Y);
         }
 
-        public void Do(Camera camera, World world)
+        public void ReloadRenderTarget(string name, Vector2 size)
         {
-            Raylib.BeginTextureMode(RenderTarget);
-                Raylib.ClearBackground(Color.Black);
+            bool isValid = RenderTextures.TryGetValue(name, out RenderTexture2D renderTexture);
+            bool isGPUValid = Raylib.IsRenderTextureValid(renderTexture);
+
+            if (isValid && !isGPUValid)
+                throw new Exception("Render texture in dictionary but isnʼt loaded in GPU.");
+
+            if (!isValid)
+                return;
+
+            Raylib.UnloadRenderTexture(RenderTextures[name]);
+            RenderTextures[name] = Raylib.LoadRenderTexture((int)size.X, (int)size.Y);
+        }
+
+        public void Do(RenderTexture2D renderTexture, Camera camera, World world, bool drawScreen = true)
+        {
+            Raylib.BeginTextureMode(renderTexture);
+                Raylib.ClearBackground(new Color(0, 0, 0, 0));
 
                 Raylib.BeginMode2D(camera.Handle);
                     DrawWorld(world);
                 Raylib.EndMode2D();
 
-                DrawScreen();
+                if (drawScreen)
+                    DrawScreen();
             Raylib.EndTextureMode();
-
-
-            Raylib.BeginDrawing();
-                var texture = RenderTarget.Texture;
-                Rectangle source = new Rectangle(0, 0, texture.Width, -texture.Height); // flip Y
-                Rectangle dest = new Rectangle(0, 0, texture.Width, texture.Height);
-                Raylib.DrawTexturePro(texture, source, dest, Vector2.Zero, 0.0f, Color.White);
-
-                //texture = RenderTarget2.Texture;
-                //source = new Rectangle(0, 0, texture.Width, -texture.Height); // flip Y
-                //dest = new Rectangle(0, 0, texture.Width/2, texture.Height/2);
-                //Raylib.DrawTexturePro(texture, source, dest, Vector2.Zero, 0.0f, Color.White);
-            Raylib.EndDrawing();
         }
 
         public void DrawScreen()
