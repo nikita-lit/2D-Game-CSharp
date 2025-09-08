@@ -41,7 +41,7 @@ namespace Game2D
             Camera = new Camera(Vector2.Zero, new Vector2(ScreenSize.X / 2f, ScreenSize.Y / 2f));
             Camera.FollowTarget = Player;
 
-            TestCamera = new Camera(Vector2.Zero, new Vector2(256 / 2f, 256 / 2f));
+            TestCamera = new Camera(Vector2.Zero, new Vector2(256f / 2f, 256f / 2f), resize: false);
 
             //Vector2 center = new(0, 0);
             //for (int i = 0; i < 10; i++)
@@ -83,7 +83,7 @@ namespace Game2D
                 Render();
             }
 
-            Stop();
+            Shutdown();
         }
 
         public static void Render()
@@ -91,19 +91,20 @@ namespace Game2D
             Renderer.Do(TestRenderTexture, TestCamera, World, false);
             Renderer.Do(MainRenderTexture, Camera, World);
 
+
             Raylib.BeginDrawing();
                 var texture = MainRenderTexture.Texture;
                 Rectangle source = new Rectangle(0, 0, texture.Width, -texture.Height); // flip Y
                 Rectangle dest = new Rectangle(0, 0, texture.Width, texture.Height);
                 Raylib.DrawTexturePro(texture, source, dest, Vector2.Zero, 0.0f, Color.White);
-                
+
                 var texture2 = TestRenderTexture.Texture;
                 Rectangle source2 = new Rectangle(0, 0, texture2.Width, -texture2.Height); // flip Y
-                Rectangle dest2 = new Rectangle(0, 256, texture2.Width, texture2.Height);
+                Rectangle dest2 = new Rectangle(ScreenSize.X-texture2.Width, 0, texture2.Width, texture2.Height);
 
-                //Raylib.BeginScissorMode(0, 256, texture2.Width, texture2.Height);
-                    Raylib.DrawTexturePro(texture2, source2, dest2, Vector2.Zero, 0.0f, Color.White);
-                //Raylib.EndScissorMode();
+                Raylib.DrawRectangleRec(dest2, Color.Black);
+                Raylib.DrawTexturePro(texture2, source2, dest2, Vector2.Zero, 0.0f, Color.White);
+                Raylib.DrawRectangleLinesEx(dest2, 2f, Color.White);
             Raylib.EndDrawing();
         }
 
@@ -126,7 +127,8 @@ namespace Game2D
                 var oldSize = ScreenSize;
                 ScreenSize = newSize;
                 OnScreenResize?.Invoke(oldSize, newSize);
-                Renderer.ReloadRenderTarget("main", newSize);
+
+                MainRenderTexture = Renderer.ReloadRenderTarget("main", newSize);
             }
 
             var entities = World.Entities.Values.ToList();
@@ -200,7 +202,7 @@ namespace Game2D
             }
         }
 
-        public static void Stop()
+        public static void Shutdown()
         {
             Raylib.CloseWindow();
         }

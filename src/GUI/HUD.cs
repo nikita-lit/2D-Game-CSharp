@@ -108,13 +108,13 @@ namespace Game2D.Gui
 
         public void OnScreenResize(Vector2 oldSize, Vector2 newSize)
         {
-            Console.WriteLine();
-            foreach (var slot in _slots)
-            {
-                Console.WriteLine();
-                Console.WriteLine(slot.Rect);
-            }
-            Console.WriteLine();
+            //Console.WriteLine();
+            //foreach (var slot in _slots)
+            //{
+            //    Console.WriteLine();
+            //    Console.WriteLine(slot.Rect);
+            //}
+            //Console.WriteLine();
         }
     }
 }

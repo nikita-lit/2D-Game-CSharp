@@ -33,7 +33,7 @@ namespace Game2D
             set => Handle.Target = value;
         }
 
-        public Camera(Vector2 target, Vector2 offset, float rotation = 0.0f)
+        public Camera(Vector2 target, Vector2 offset, float rotation = 0.0f, bool resize = true)
         {
             Handle = new()
             {
@@ -43,8 +43,11 @@ namespace Game2D
                 Zoom = BaseZoom * Zoom,
             };
 
-            Program.OnScreenResize += (oldSize, newSize) => {
-                Handle.Offset = newSize / 2;
+            Program.OnScreenResize += (oldSize, newSize) => 
+            {
+                if (resize)
+                    Handle.Offset = newSize / 2;
+                    
                 Handle.Zoom = BaseZoom * Zoom;
             };
         }

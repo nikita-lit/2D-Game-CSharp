@@ -1,5 +1,6 @@
 ﻿using Game2D.Environment;
 using Game2D.Gui;
+using Game2D.Classes;
 
 namespace Game2D.Render
 {
@@ -16,17 +17,18 @@ namespace Game2D.Render
         {
             bool isValid = RenderTextures.TryGetValue(name, out RenderTexture2D renderTexture);
             bool isGPUValid = Raylib.IsRenderTextureValid(renderTexture);
+
             if (!isValid && isGPUValid)
                 throw new Exception("Render texture loaded in GPU but not in dictionary.");
 
             if (isValid && isGPUValid)
                 throw new Exception($"Render texture with name [{name}] already exists.");
 
-            RenderTextures[name] = renderTexture;
-            return Raylib.LoadRenderTexture((int)size.X, (int)size.Y);
+            RenderTextures[name] = Raylib.LoadRenderTexture((int)size.X, (int)size.Y);
+            return RenderTextures[name];
         }
 
-        public void ReloadRenderTarget(string name, Vector2 size)
+        public RenderTexture2D ReloadRenderTarget(string name, Vector2 size)
         {
             bool isValid = RenderTextures.TryGetValue(name, out RenderTexture2D renderTexture);
             bool isGPUValid = Raylib.IsRenderTextureValid(renderTexture);
@@ -35,16 +37,17 @@ namespace Game2D.Render
                 throw new Exception("Render texture in dictionary but isnʼt loaded in GPU.");
 
             if (!isValid)
-                return;
+                throw new Exception("Reloading invalid render texture.");
 
             Raylib.UnloadRenderTexture(RenderTextures[name]);
             RenderTextures[name] = Raylib.LoadRenderTexture((int)size.X, (int)size.Y);
+            return RenderTextures[name];
         }
 
         public void Do(RenderTexture2D renderTexture, Camera camera, World world, bool drawScreen = true)
         {
             Raylib.BeginTextureMode(renderTexture);
-                Raylib.ClearBackground(new Color(0, 0, 0, 0));
+                Raylib.ClearBackground(Color.Black);
 
                 Raylib.BeginMode2D(camera.Handle);
                     DrawWorld(world);
@@ -59,21 +62,22 @@ namespace Game2D.Render
         {
             GUI.Draw();
 
-            //if (Focus is Panel panel)
-            //    Raylib.DrawRectangleLinesEx(panel.Rect, 1.0f, Color.Orange);
+            if (Program.IsDebug)
+            {
+                if (Program.Focus is Panel panel)
+                    Raylib.DrawRectangleLinesEx(panel.Rect, 1.0f, Color.Orange);
+            }
         }
 
         public void DrawWorld(World world)
         {
-            Raylib.DrawRectangle(-500, -500, 1000, 1000, Color.DarkGray);
+            world?.Draw();
 
-            foreach (var pair in world.Entities.OrderBy(e => e.Value.Position.Y))
+            if (Program.IsDebug)
             {
-                pair.Value.Draw();
+                if (Program.Focus is WorldClickable wc)
+                    Raylib.DrawRectangleLinesEx(wc.Rect, 1.0f, Color.Orange);
             }
-
-            //if (Focus is WorldClickable wc)
-            //    Raylib.DrawRectangleLinesEx(wc.Rect, 1.0f, Color.Orange);
 
             //Raylib.DrawLine((int)Camera.Target.X, -Raylib.GetScreenHeight() * 10, (int)Camera.Target.X, Raylib.GetScreenHeight() * 10, Color.Green);
             //Raylib.DrawLine(-Raylib.GetScreenWidth() * 10, (int)Camera.Target.Y, Raylib.GetScreenWidth() * 10, (int)Camera.Target.Y, Color.Green);
