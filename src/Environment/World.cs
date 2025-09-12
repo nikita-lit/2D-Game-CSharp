@@ -6,12 +6,15 @@ namespace Game2D.Environment
     {
         public Dictionary<Guid, Entity> Entities = new();
         public Weather Weather;
+        public DayCycle DayCycle;
 
         public World() 
         {
             Weather = new Weather() {
                 Temperature = 25,
             };
+
+            DayCycle = new DayCycle(new DateTime(2008, 1, 1, 6, 0, 0));
         }
 
         public void Draw()
@@ -23,6 +26,11 @@ namespace Game2D.Environment
             {
                 pair.Value.Draw();
             }
+        }
+
+        public void Update()
+        {
+            DayCycle.Update();
         }
     }
 }

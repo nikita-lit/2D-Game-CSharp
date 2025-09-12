@@ -8,7 +8,6 @@ namespace Game2D.Gui
     {
         public Panel Root;
         private List<SlotIcon> _slots = new();
-        private bool _isDebugVisible = true;
 
         public HUD(Panel root)
         {
@@ -52,6 +51,16 @@ namespace Game2D.Gui
                 var pos = new Vector2(GUI.SS(15), GUI.SS(15));
 
                 Render.Draw.AlignedText("HP: " + Program.Player.Vitals.Health,
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(20);
+
+                Render.Draw.AlignedText("Time: " + Program.World.DayCycle.Time.ToString("HH:mm:ss - MM-dd-yy"),
+                    pos, "PixelBold", 26, Color.White);
+
+                pos.Y += GUI.SS(20);
+
+                Render.Draw.AlignedText("Time Of Day: " + Program.World.DayCycle.GetTimeOfDay(),
                     pos, "PixelBold", 26, Color.White);
 
                 pos.Y += GUI.SS(20);

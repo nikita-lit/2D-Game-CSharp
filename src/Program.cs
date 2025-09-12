@@ -88,9 +88,18 @@ namespace Game2D
 
         public static void Render()
         {
+            if (Raylib.IsWindowResized() && !Raylib.IsWindowFullscreen())
+            {
+                var newSize = new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
+                var oldSize = ScreenSize;
+                ScreenSize = newSize;
+                OnScreenResize?.Invoke(oldSize, newSize);
+
+                MainRenderTexture = Renderer.ReloadRenderTarget("main", newSize);
+            }
+
             Renderer.Do(TestRenderTexture, TestCamera, World, false);
             Renderer.Do(MainRenderTexture, Camera, World);
-
 
             Raylib.BeginDrawing();
                 var texture = MainRenderTexture.Texture;
@@ -121,15 +130,7 @@ namespace Game2D
             UpdateInput();
             GUI.Update();
 
-            if (Raylib.IsWindowResized() && !Raylib.IsWindowFullscreen())
-            {
-                var newSize = new Vector2(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
-                var oldSize = ScreenSize;
-                ScreenSize = newSize;
-                OnScreenResize?.Invoke(oldSize, newSize);
-
-                MainRenderTexture = Renderer.ReloadRenderTarget("main", newSize);
-            }
+            World.Update();
 
             var entities = World.Entities.Values.ToList();
             for (int i = 0; i < entities.Count; i++)
